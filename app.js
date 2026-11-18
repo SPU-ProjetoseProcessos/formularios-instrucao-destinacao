@@ -148,7 +148,7 @@
   }
   /* Devolve a mensagem de problema do campo, ou ''. `completo` = só reclama de incompleto ao sair do campo. */
   function validar(fmt, v, saiu, extra) {
-    if (!cheio(v)) return '';
+    if (typeof v !== 'string' || !cheio(v)) return '';
     var d = v.replace(/[^0-9A-Z]/g, '');
     if (fmt === 'nup') {
       if (d.length < 17) return saiu ? 'Número incompleto: o processo tem 17 dígitos.' : '';
@@ -312,7 +312,7 @@
     if (manif.vence.length === 1) {
       var r = manif.vence[0], ap = aplicarCondicional(r, aut), texto = MANIFESTACAO[ap.resultado] || ap.resultado;
       if (ap.resultado === 'ge_desup' && r.ge_desup_nivel !== null && r.ge_desup_nivel !== undefined) texto += ' — ' + NIVEL_GE_DESUP[r.ge_desup_nivel];
-      G.manif = { codigo: ap.resultado, texto: texto, fundamento: r.fundamento, regra: r.id };
+      G.manif = { codigo: ap.resultado, texto: texto, fundamento: r.fundamento, regra: r.id, nivel: ap.resultado === 'ge_desup' ? r.ge_desup_nivel : null };
       alvo.appendChild(bloco('Manifestação prévia', texto, ['Fundamento: ' + r.fundamento, ap.nota,
         ap.resultado === 'ge_desup' && r.ge_desup_gatilho ? GATILHO[r.ge_desup_gatilho] : null, 'Regra ' + r.id + ' da base.']));
     } else {
@@ -378,6 +378,13 @@
       });
       fs.appendChild(par); return fs;
     }
+    if (fmt === 'checks') {
+      var fc = el('fieldset', { class: 'campo campo-radio' }, [el('legend', { class: 'rot', text: def.r })]), pc = el('div', { class: 'par' }), marcados = valor || [];
+      def.valores.forEach(function (v) {
+        pc.appendChild(el('label', {}, [el('input', { type: 'checkbox', name: 'ck-' + n + '-' + p, 'data-n': n, 'data-p': p, value: v[0], checked: marcados.indexOf(v[0]) >= 0 }), v[1]]));
+      });
+      fc.appendChild(pc); return fc;
+    }
     if (fmt === 'uf') {
       var su = el('select', { 'data-n': n, 'data-p': p }, [el('option', { value: '', text: 'Escolha o estado' })]);
       (window.ESTADOS || []).forEach(function (u) { su.appendChild(el('option', { value: u[0], text: u[1] + ' (' + u[0] + ')' })); });
@@ -433,25 +440,31 @@
       it.opcoes.forEach(function (o, i) {
         var inp = el('input', { type: 'radio', name: 'r-' + it.n, 'data-n': it.n, 'data-p': 'op', value: String(i), checked: r.op === i });
         fs.appendChild(el('label', { class: 'opcao' }, [inp, el('span', {}, [(o.n ? o.n + ' — ' : ''), comLinks(o.t)])]));
-        if (o.campos || o.lembrete) {
+        if (o.campos || (o.lembrete && F.modelo_obs !== 'janela')) {
           var cv = ((r.c || {})[i]) || {}, compl = el('div', { class: 'compl', 'data-compl': it.n + ':' + i, hidden: r.op !== i });
           if (o.campos) {
             var lc = el('div', { class: 'linha-campos' });
             o.campos.forEach(function (c) { lc.appendChild(campoEl(it.n, 'c:' + i + ':' + c.k, c, cv[c.k])); });
             compl.appendChild(lc);
           }
-          if (o.lembrete) compl.appendChild(lembreteAberto(o.lembrete));
+          if (o.lembrete && F.modelo_obs !== 'janela') compl.appendChild(lembreteAberto(o.lembrete));
           fs.appendChild(compl);
         }
       });
       d.appendChild(fs);
       if (it.conclusao) {
         var enc = el('div', { id: 'encaminhamento', hidden: true });
-        enc.appendChild(radios('enc-' + it.n, 'Encaminhamento', [['superintendente', F.encaminhamento.superintendente], ['secretario', F.encaminhamento.secretario]], r.enc,
+        enc.appendChild(radios('enc-' + it.n, 'Encaminhamento', F.encaminhamento.map(function (e) { return [e.k, e.t]; }), r.enc,
           function (v) { resp(it.n).enc = v; salvar(); atualizar(); }));
         enc.appendChild(el('p', { class: 'vinculo', id: 'dica-encaminhamento' }));
         d.appendChild(enc);
       }
+    } else if (it.tipo === 'varias') {
+      var fv = el('fieldset', {}, [el('legend', { class: 'rot', text: 'Marque as opções aplicáveis' })]), ops = r.ops || [];
+      it.opcoes.forEach(function (o, i) {
+        fv.appendChild(el('label', { class: 'opcao' }, [el('input', { type: 'checkbox', name: 'v-' + it.n, 'data-n': it.n, 'data-p': 'ops', value: String(i), checked: ops.indexOf(i) >= 0 }), el('span', {}, [comLinks(o.t)])]));
+      });
+      d.appendChild(fv);
     } else if (it.tipo === 'lista_sn') {
       if (it.aviso) d.appendChild(el('p', { class: 'ajuda' }, [comLinks(it.aviso)]));
       it.perguntas.forEach(function (q, i) {
@@ -467,10 +480,52 @@
 
     var extra = el('div', { class: 'extra' });
     if (it.sei) extra.appendChild(docSeiEl(it.n, 'sei', r.sei));
+    if (F.modelo_obs === 'janela') {
+      var temLembrete = !!(it.lembrete || (it.opcoes || []).some(function (o) { return o.lembrete; }));
+      var bt = el('button', { type: 'button', class: 'bt-obs', 'data-obs': it.n }, ['Observações e ressalvas', temLembrete ? el('span', { class: 'tag-lembrete', text: 'lembrete da Unidade Central' }) : null]);
+      bt.addEventListener('click', function () { abrirJanela(it); });
+      extra.appendChild(el('div', { class: 'linha-obs' }, [bt, el('p', { class: 'previa-obs', id: 'previa-obs-' + it.n, text: previaObs(r.obs) })]));
+      d.appendChild(extra);
+      return d;
+    }
     extra.appendChild(campoEl(it.n, 'obs', { r: 'Observações e ressalvas', longo: true }, r.obs));
     d.appendChild(extra);
     if (it.lembrete) d.appendChild(lembreteRecolhido(it.lembrete));
     return d;
+  }
+  function previaObs(t) { return cheio(t) ? (String(t).length > 140 ? String(t).slice(0, 140) + '…' : String(t)) : 'Nenhuma observação ou ressalva.'; }
+  /* Modelo em teste no Aforamento Gratuito (18/11/2026): o lembrete da Unidade Central e o
+   * campo de observações e ressalvas ficam numa janela, aberta pelo botão do item. No formulário
+   * original os lembretes ficam justamente na coluna "Observações e Ressalvas". */
+  var itemJanela = null;
+  function abrirJanela(it) {
+    itemJanela = it;
+    var r = resp(it.n), dlg = $('janela-obs');
+    $('janela-titulo').textContent = it.n + ' — ' + it.titulo;
+    var alvo = $('janela-lembrete'); alvo.textContent = '';
+    var blocos = [];
+    if (it.lembrete) blocos.push(it.lembrete);
+    if (it.tipo === 'uma' && typeof r.op === 'number' && it.opcoes[r.op].lembrete) blocos.push(it.opcoes[r.op].lembrete);
+    if (blocos.length) {
+      var caixa = el('div', { class: 'lembrete aberto-sempre' }, [el('p', { class: 'titulo-lembrete', text: 'Lembrete da Unidade Central' })]);
+      blocos.forEach(function (b) { caixa.appendChild(blocosEl(b)); });
+      alvo.appendChild(caixa);
+    } else if (it.tipo === 'uma' && (it.opcoes || []).some(function (o) { return o.lembrete; })) {
+      alvo.appendChild(el('p', { class: 'nota', text: 'Marque uma opção do item para ver o lembrete correspondente.' }));
+    }
+    $('janela-texto').value = r.obs || '';
+    if (dlg.showModal) dlg.showModal(); else dlg.setAttribute('open', '');
+    $('janela-texto').focus();
+  }
+  function fecharJanela() {
+    var dlg = $('janela-obs');
+    if (itemJanela) {
+      resp(itemJanela.n).obs = $('janela-texto').value; salvar();
+      var pv = $('previa-obs-' + itemJanela.n); if (pv) pv.textContent = previaObs($('janela-texto').value);
+      var b = document.querySelector('[data-obs="' + itemJanela.n + '"]'); if (b) b.focus();
+      itemJanela = null; atualizar();
+    }
+    if (dlg.open) { if (dlg.close) dlg.close(); else dlg.removeAttribute('open'); }
   }
   function montarFormulario() {
     var alvo = $('formulario'); alvo.textContent = '';
@@ -494,6 +549,14 @@
     if (!n || !p) return;
     if (t.type === 'radio' && !t.checked) return;
     var r = resp(n), par = p.split(':');
+    if (t.type === 'checkbox') {
+      var grupo = [].slice.call(document.querySelectorAll('input[type=checkbox][name="' + t.name + '"]')).filter(function (x) { return x.checked; });
+      var vals = p === 'ops' ? grupo.map(function (x) { return parseInt(x.value, 10); }) : grupo.map(function (x) { return x.value; });
+      if (p === 'ops') r.ops = vals;
+      else if (par[0] === 'c') { r.c = r.c || {}; r.c[par[1]] = r.c[par[1]] || {}; r.c[par[1]][par[2]] = vals; }
+      else if (par.length === 2) { r[par[0]] = r[par[0]] || {}; r[par[0]][par[1]] = vals; }
+      salvar(); atualizar(); return;
+    }
     if (par[0] === 'op') {
       r.op = parseInt(t.value, 10);
       document.querySelectorAll('[data-compl^="' + n + ':"]').forEach(function (c) { c.hidden = c.getAttribute('data-compl') !== n + ':' + r.op; });
@@ -522,6 +585,7 @@
     var r = E.r[it.n] || {};
     if (it.tipo === 'texto' || it.tipo === 'longo') return cheio(r.t);
     if (it.tipo === 'uma') return typeof r.op === 'number';
+    if (it.tipo === 'varias') return !!(r.ops && r.ops.length);
     if (it.tipo === 'lista_sn') return it.perguntas.every(function (q, i) { return (r.sn || {})[i]; });
     if (it.tipo === 'campos') return it.campos.some(function (c) { return cheio(c.motor ? E.txt[c.motor] : (r.k || {})[c.k]); });
     return true;
@@ -549,11 +613,18 @@
         if (o.alerta) alertas.push(o.alerta);
         if (it.conclusao) concl = o;
         if (it.governanca) {
+          var codigos = Array.isArray(it.governanca) ? it.governanca : ['cde'];
           if (r.op === 0 && ((r.c || {})[0] || {}).resultado === 'nao_favoravel') cdeNaoFavoravel = true;
-          if (G && G.manif && (r.op === 0) !== (G.manif.codigo === 'cde'))
+          if (G && G.manif && (r.op === 0) !== (codigos.indexOf(G.manif.codigo) >= 0))
             alertas.push('Item ' + it.n + ': a resposta marcada não confere com o enquadramento do passo 2 (' + G.manif.texto + ').');
+          var onde = ((r.c || {})[r.op] || {}).onde;
+          if (G && G.manif && onde && codigos.indexOf(G.manif.codigo) >= 0 && onde !== G.manif.codigo)
+            alertas.push('Item ' + it.n + ': o cadastro marcado não confere com o enquadramento do passo 2 (' + G.manif.texto + ').');
         }
       }
+      var escolhas = (it.campos || []).map(function (c) { return [c, (r.k || {})[c.k]]; });
+      if (it.tipo === 'uma' && typeof r.op === 'number') (it.opcoes[r.op].campos || []).forEach(function (c) { escolhas.push([c, ((r.c || {})[r.op] || {})[c.k]]); });
+      escolhas.forEach(function (x) { if (x[0].alertas && x[0].alertas[x[1]]) alertas.push(x[0].alertas[x[1]]); });
       if (it.tipo === 'lista_sn') it.perguntas.forEach(function (q, i) {
         if ((r.sn || {})[i] === 'sim') alertas.push('Item ' + it.n + ', pergunta ' + (i + 1) + ': a resposta SIM é óbice ao prosseguimento.');
       });
@@ -566,10 +637,15 @@
     if (concl && concl.fecho === 'favoravel') {
       if (cdeNaoFavoravel) alertas.push('A CDE se manifestou de forma não favorável (item 5.2), mas a conclusão marcada é favorável.');
       if (alertas.length) alertas.push('A conclusão marcada é favorável, mas há ponto(s) acima que geram indeferimento, óbice, diligência ou correção.');
-      if (rc.enc && G && G.comp && rc.enc !== G.comp.codigo) alertas.push('Encaminhamento: o marcado não confere com quem decide pelo enquadramento do passo 2 (' + G.comp.texto + ').');
+      var enc = encaminhamento(rc.enc);
+      if (enc && enc.esperado && G) {
+        var dim = Object.keys(enc.esperado)[0], g = G[dim];
+        if (g && g.codigo !== enc.esperado[dim]) alertas.push('Encaminhamento: o marcado não confere com o enquadramento do passo 2 (' + g.texto + ').');
+      }
     }
     return { alertas: alertas, pend: pend, concl: concl };
   }
+  function encaminhamento(k) { return (F.encaminhamento || []).filter(function (e) { return e.k === k; })[0] || null; }
   function irPara(n) {
     var alvo = $('item-' + n); if (!alvo) return;
     alvo.scrollIntoView({ block: 'start' });
@@ -600,7 +676,7 @@
     var enc = $('encaminhamento');
     if (enc) {
       enc.hidden = !(c.concl && c.concl.fecho === 'favoravel');
-      $('dica-encaminhamento').textContent = G && G.comp ? 'Pelo enquadramento do passo 2, quem decide: ' + G.comp.texto + '.' : '';
+      $('dica-encaminhamento').textContent = G && (G.comp || G.manif) ? 'Pelo enquadramento do passo 2: ' + [G.manif ? G.manif.texto : '', G.comp ? 'quem decide: ' + G.comp.texto : ''].filter(Boolean).join('; ') + '.' : '';
     }
     var dg = $('dica-governanca');
     if (dg) dg.textContent = !temGovernanca() ? '' : G && G.manif ? 'Pelo enquadramento do passo 2: ' + G.manif.texto + '.' : 'Responda o enquadramento do passo 2 para ver a indicação da Governança.';
@@ -626,6 +702,7 @@
     if (c.fmt === 'municipio') return '<strong>' + esc(c.r) + ':</strong> ' + esc(String(v).split('|')[1] || v);
     if (c.fmt === 'uf') { var u = (window.ESTADOS || []).filter(function (x) { return x[0] === v; })[0]; return '<strong>' + esc(c.r) + ':</strong> ' + esc(u ? u[1] : v); }
     if (c.fmt === 'radio') { var o = c.valores.filter(function (x) { return x[0] === v; })[0]; return '<strong>' + esc(c.r) + ':</strong> ' + esc(o ? o[1] : v); }
+    if (c.fmt === 'checks') return '<strong>' + esc(c.r) + ':</strong> ' + esc(c.valores.filter(function (x) { return v.indexOf(x[0]) >= 0; }).map(function (x) { return x[1]; }).join('; '));
     return '<strong>' + esc(c.r) + ':</strong> ' + esc(v).replace(/\n/g, '<br>');
   }
   function respostaHTML(it) {
@@ -643,6 +720,8 @@
         h.push('( x ) ' + esc(o.n ? o.n + ' — ' : '') + comLinksHTML(o.t));
         (o.campos || []).forEach(function (c) { var s = valorCampo(c, cv[c.k]); if (s) h.push(s); });
       }
+    } else if (it.tipo === 'varias') {
+      (r.ops || []).slice().sort(function (a, b) { return a - b; }).forEach(function (i) { h.push('( x ) ' + comLinksHTML(it.opcoes[i].t)); });
     } else if (it.tipo === 'lista_sn') {
       it.perguntas.forEach(function (q, i) {
         var v = (r.sn || {})[i];
@@ -689,9 +768,13 @@
     var o = it.opcoes[r.op], cv = (r.c || {})[r.op] || {};
     h += Pd('texto', '<strong>' + esc(o.n) + '</strong> ( x ) ' + comLinksHTML(o.t));
     (o.campos || []).forEach(function (c) { var s = valorCampo(c, cv[c.k]); if (s) h += Pd('texto', s); });
-    if (o.fecho === 'favoravel' && r.enc) h += Pd('texto', 'Encaminhamento: ( x ) ' + comLinksHTML(F.encaminhamento[r.enc]));
+    var enc = o.fecho === 'favoravel' ? encaminhamento(r.enc) : null;
+    if (enc) h += Pd('texto', 'Encaminhamento: ( x ) ' + comLinksHTML(enc.t));
     if (cheio(r.obs)) h += Pd('texto', '<strong>Observações e ressalvas:</strong> ' + esc(r.obs).replace(/\n/g, '<br>'));
-    h += Pd('texto', esc(F.fecho[o.fecho]));
+    var fecho = (enc && enc.fecho) || F.fecho[o.fecho] || '';
+    if (G && G.manif && G.manif.nivel !== null && G.manif.nivel !== undefined) fecho = fecho.replace('___ (0, 1 ou 2)', String(G.manif.nivel));
+    if (cheio(E.txt.valor)) fecho = fecho.replace('R$ _____', 'R$ ' + E.txt.valor);
+    if (fecho) h += Pd('texto', comLinksHTML(fecho));
     h += Pd('texto', 'À consideração superior.');
     return h;
   }
@@ -725,6 +808,9 @@
       $(id).addEventListener('change', aoEditar);
       $(id).addEventListener('focusout', aoSair);
     });
+    $('janela-concluir').addEventListener('click', fecharJanela);
+    $('janela-obs').addEventListener('close', function () { if (itemJanela) fecharJanela(); });
+    $('janela-obs').addEventListener('cancel', function (ev) { ev.preventDefault(); fecharJanela(); });
     $('previa-det').addEventListener('toggle', function () { if ($('previa-det').open) $('previa').innerHTML = documentoHTML(); });
     $('bt-copiar').addEventListener('click', function () {
       copiar(documentoHTML()).then(function (ok) {

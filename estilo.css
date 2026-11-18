@@ -161,6 +161,16 @@ button.principal:hover { background:#14206a; }
 @media (max-width:760px) {
   .enq-campos, .resultado, .linha-campos, .extra, .sn { grid-template-columns:1fr; }
 }
+/* Janela de observações e ressalvas (modelo em teste no Aforamento Gratuito) */
+.linha-obs { display:flex; flex-wrap:wrap; gap:8px 14px; align-items:center; }
+.bt-obs { background:var(--papel); border:1px solid var(--azul); color:var(--azul); display:inline-flex; gap:10px; align-items:center; }
+.bt-obs .tag-lembrete { font-size:.8rem; font-weight:700; color:#5c5446; background:var(--bege); border:1px solid #d6cfbf; border-radius:999px; padding:1px 9px; }
+.previa-obs { margin:0; color:var(--tinta-fraca); font-size:.93rem; flex:1 1 16rem; }
+dialog#janela-obs { width:min(760px, calc(100vw - 32px)); max-height:calc(100vh - 48px); border:1px solid var(--linha-forte); border-radius:8px; padding:20px 22px; box-shadow:var(--sombra); color:var(--tinta); }
+dialog#janela-obs::backdrop { background:rgba(20,33,58,.45); }
+dialog#janela-obs h3 { font-size:1.15rem; margin:0 0 12px; line-height:1.35; }
+dialog#janela-obs .lembrete { margin:0 0 14px; }
+dialog#janela-obs textarea { min-height:9em; }
 #impressao { display:none; }
 @media print {
   body > *:not(#impressao) { display:none !important; }

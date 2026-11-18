@@ -9,7 +9,7 @@ pronto para o SEI.
 ## O que faz
 
 1. **Escolha do formulário.** Mostra só os formulários disponíveis. Hoje: Inscrição de
-   Ocupação.
+   Ocupação e Aforamento Gratuito.
 2. **Enquadramento.** Com valor, área da União e as perguntas do caso, diz se há manifestação
    prévia da Comissão de Destinações Especiais (CDE) e quem decide, com o fundamento. O
    cálculo é o da [Governança da Destinação](https://spu-projetoseprocessos.github.io/simulador-competencia-spu/).

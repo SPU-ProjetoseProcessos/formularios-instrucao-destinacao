@@ -1414,10 +1414,22 @@ window.FORMULARIOS['inscricao-de-ocupacao'] = {
    ]
   }
  ],
- "encaminhamento": {
-  "superintendente": "Ao SUPERINTENDENTE DO PATRIMÔNIO DA UNIÃO, para decisão, por se tratar de ofício ou a pedido de Inscrição de Ocupação, nos termos do §3º, do art. 7º, da Lei nº 9.636/98.",
-  "secretario": "Ao SECRETÁRIO DO PATRIMÔNIO DA UNIÃO, para decisão, por se tratar de área de domínio da União com extensão igual ou superior a 500.000,00m² (quinhentos mil metros quadrados), nos termos do art. 19, da IN SPU nº 04/2018."
- },
+ "encaminhamento": [
+  {
+   "k": "superintendente",
+   "esperado": {
+    "comp": "superintendente"
+   },
+   "t": "Ao SUPERINTENDENTE DO PATRIMÔNIO DA UNIÃO, para decisão, por se tratar de ofício ou a pedido de Inscrição de Ocupação, nos termos do §3º, do art. 7º, da Lei nº 9.636/98."
+  },
+  {
+   "k": "secretario",
+   "esperado": {
+    "comp": "secretario"
+   },
+   "t": "Ao SECRETÁRIO DO PATRIMÔNIO DA UNIÃO, para decisão, por se tratar de área de domínio da União com extensão igual ou superior a 500.000,00m² (quinhentos mil metros quadrados), nos termos do art. 19, da IN SPU nº 04/2018."
+  }
+ ],
  "fecho": {
   "nega": "Diante do exposto, entende-se que o processo não reúne condições para deferimento do requerimento de Inscrição de Ocupação, devendo os autos ser submetidos ao Superintendente do Patrimônio da União no Estado, para decisão.",
   "favoravel": "Diante do exposto, entende-se que o processo encontra-se em condições de ser submetido à deliberação do Superintendente do Patrimônio da União no Estado ou ao Secretário do Patrimônio da União."

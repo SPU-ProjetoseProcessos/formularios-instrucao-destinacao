@@ -89,6 +89,16 @@
   <p class="assinatura">Desenvolvido por CGGES — <a href="https://spu-projetoseprocessos.github.io/escritorio/" target="_blank" rel="noopener">Escritório de Processos</a></p>
 </footer>
 
+<dialog id="janela-obs" aria-labelledby="janela-titulo">
+  <h3 id="janela-titulo"></h3>
+  <div id="janela-lembrete"></div>
+  <label class="campo"><span class="rot">Observações e ressalvas</span>
+    <textarea id="janela-texto" rows="8"></textarea></label>
+  <p class="nota">"Observação" esclarece, informa ou orienta sem alterar a conclusão. "Ressalva" limita, condiciona ou
+    excepciona uma conclusão.</p>
+  <div class="acoes"><button type="button" class="principal" id="janela-concluir">Concluir</button></div>
+</dialog>
+
 <div id="impressao" aria-hidden="true"></div>
 
 <script src="https://spu-projetoseprocessos.github.io/simulador-competencia-spu/base.js"></script>
@@ -96,6 +106,7 @@
 <script src="https://spu-projetoseprocessos.github.io/simulador-competencia-spu/motor.js"></script>
 <script src="dados-municipios.js"></script>
 <script src="formularios/inscricao-de-ocupacao.js"></script>
+<script src="formularios/aforamento-gratuito.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
