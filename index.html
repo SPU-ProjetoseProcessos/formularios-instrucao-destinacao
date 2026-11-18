@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Formulários de Instrução de Destinação</title>
+<link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+
+<header class="topo">
+  <div class="faixa">
+    <span class="marca">
+      <span class="marca-nome"><b>Formulários</b> <span>de Instrução</span></span>
+      <span class="marca-barras" aria-hidden="true">
+        <i style="height:9px;background:var(--marca-1)"></i>
+        <i style="height:15px;background:var(--marca-2)"></i>
+        <i style="height:20px;background:var(--marca-3)"></i>
+        <i style="height:13px;background:var(--marca-4)"></i>
+        <i style="height:7px;background:var(--marca-1)"></i>
+      </span>
+    </span>
+    <div class="modulo">
+      <strong>Análise da destinação, pronta para o SEI</strong>
+      <span>Protótipo para validação · não use em processo real</span>
+    </div>
+    <nav class="links">
+      <a href="https://spu-projetoseprocessos.github.io/simulador-competencia-spu/" target="_blank" rel="noopener">Governança da Destinação <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
+      <a href="https://spu-projetoseprocessos.github.io/SPUProcessos/" target="_blank" rel="noopener">SPUProcessos <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
+      <a href="https://spu-projetoseprocessos.github.io/escritorio/" target="_blank" rel="noopener">Página do Escritório <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
+    </nav>
+  </div>
+</header>
+
+<main id="app">
+  <p class="erro" id="erro-carga" hidden></p>
+
+  <section class="cartao" aria-labelledby="t-inicio">
+    <h2 id="t-inicio"><span class="passo">1</span> Formulário</h2>
+    <label class="campo largo-max"><span class="rot">Qual análise você vai fazer?</span>
+      <select id="sel-form"><option value="">Escolha o formulário</option></select></label>
+  </section>
+
+  <div id="corpo" hidden>
+    <section class="cartao" id="cartao-enq" aria-labelledby="t-enq">
+      <h2 id="t-enq"><span class="passo">2</span> Enquadramento: quem se manifesta e quem decide</h2>
+      <p class="nota">O resultado vem da Governança da Destinação.</p>
+      <div id="enq-campos" class="enq-campos"></div>
+      <div id="enq-resultado" class="resultado" aria-live="polite"></div>
+    </section>
+
+    <section class="cartao" aria-labelledby="t-fluxo">
+      <h2 id="t-fluxo"><span class="passo">3</span> Fluxo do processo no SPUProcessos</h2>
+      <div id="fluxos"></div>
+    </section>
+
+    <section aria-labelledby="t-form">
+      <h2 id="t-form" class="solto"><span class="passo">4</span> Análise</h2>
+      <p class="nota" id="legislacao"></p>
+      <div id="formulario"></div>
+    </section>
+
+    <section class="cartao" aria-labelledby="t-saida">
+      <h2 id="t-saida"><span class="passo">5</span> Conferir e levar para o SEI</h2>
+      <div id="atencao"></div>
+      <div class="acoes">
+        <button type="button" class="principal" id="bt-copiar">Copiar para o SEI</button>
+        <button type="button" id="bt-imprimir">Imprimir ou salvar em PDF</button>
+        <button type="button" id="bt-limpar">Limpar tudo</button>
+        <span class="status" id="status" role="status"></span>
+      </div>
+      <div class="orienta">
+        <h3>Depois de colar no SEI</h3>
+        <ul>
+          <li>O cabeçalho da unidade e a assinatura são do próprio SEI.</li>
+          <li>Os documentos citados chegam como texto, no formato "(Doc. SEI nº 12345678)". Para virarem link, use o
+            botão de link do editor do SEI em cada número. Com a extensão SEI Pro, dá para converter todos de uma vez:
+            na janela de link do SEI (Ctrl+Shift+L), "Converter todos os números do texto".</li>
+          <li>As imagens dos itens 2.14 e 2.15 são inseridas no SEI, nos lugares marcados.</li>
+        </ul>
+      </div>
+      <details id="previa-det"><summary>Ver o documento como vai sair</summary><div class="previa" id="previa"></div></details>
+      <p class="nota">O que você digita fica guardado só neste navegador, neste computador.</p>
+    </section>
+  </div>
+</main>
+
+<footer class="rodape">
+  <p class="assinatura">Desenvolvido por CGGES — <a href="https://spu-projetoseprocessos.github.io/escritorio/" target="_blank" rel="noopener">Escritório de Processos</a></p>
+</footer>
+
+<div id="impressao" aria-hidden="true"></div>
+
+<script src="https://spu-projetoseprocessos.github.io/simulador-competencia-spu/base.js"></script>
+<script src="https://spu-projetoseprocessos.github.io/simulador-competencia-spu/rotulos.js"></script>
+<script src="https://spu-projetoseprocessos.github.io/simulador-competencia-spu/motor.js"></script>
+<script src="dados-municipios.js"></script>
+<script src="formularios/inscricao-de-ocupacao.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
