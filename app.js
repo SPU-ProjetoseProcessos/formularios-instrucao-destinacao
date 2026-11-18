@@ -200,7 +200,8 @@
   function abrirFormulario() {
     F = (window.FORMULARIOS || {})[E.form] || null;
     $('corpo').hidden = !F;
-    if (!F) return;
+    if (!F) { ['carimbo-1', 'carimbo-4'].forEach(function (id) { $(id).hidden = true; }); return; }
+    ['carimbo-1', 'carimbo-4'].forEach(function (id) { var c = $(id); c.textContent = F.carimbo || ''; c.hidden = !F.carimbo; });
     var leg = $('legislacao'); leg.textContent = 'Legislação de regência: ';
     leg.classList.add('leis');
     F.legislacao.forEach(function (l, i) {
@@ -803,6 +804,7 @@
   }
   function iniciar() {
     carregar(); montarSelecao(); abrirFormulario();
+    ligarCaixinha();
     ['formulario', 'enq-campos'].forEach(function (id) {
       $(id).addEventListener('input', aoEditar);
       $(id).addEventListener('change', aoEditar);
@@ -822,6 +824,21 @@
       if (!window.confirm('Apagar tudo o que foi preenchido neste formulário? Não dá para desfazer.')) return;
       E = novoEstado(E.form); salvar(); abrirFormulario(); $('status').textContent = 'Formulário limpo.';
     });
+  }
+  /* Caixinha do Escritório: o relato cai em home.pedidos e aparece na área da equipe da Home
+   * EPP. Dois botões, uma ficha só (regra de 13/11/2026): "Fale com a equipe" no rodapé e a
+   * pergunta junto do formulário. O caso vai junto: qual formulário e qual versão. */
+  function ligarCaixinha() {
+    if (!window.SPUCaixinha) return;
+    SPUCaixinha.iniciar({
+      ferramenta: 'formularios',
+      nome: 'Formulários de Instrução de Destinação',
+      botao: '#relatar',
+      contexto: function () {
+        return F ? [['Formulário', F.nome], ['Versão do formulário', F.origem.versao]] : [['Formulário', 'nenhum escolhido']];
+      }
+    });
+    $('fale').addEventListener('click', function () { SPUCaixinha.abrir(); });
   }
   window.__FI = { estado: function () { return E; }, documento: function () { return F ? documentoHTML() : ''; }, governanca: function () { return G; },
                   formatar: formatar, validar: validar };

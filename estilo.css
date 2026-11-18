@@ -171,6 +171,15 @@ dialog#janela-obs::backdrop { background:rgba(20,33,58,.45); }
 dialog#janela-obs h3 { font-size:1.15rem; margin:0 0 12px; line-height:1.35; }
 dialog#janela-obs .lembrete { margin:0 0 14px; }
 dialog#janela-obs textarea { min-height:9em; }
+/* Carimbo de formulário ainda em validação: contorno vermelho, sem cor cheia, levemente
+   inclinado, como carimbo de papel. Vermelho porque avisa que o texto ainda pode mudar. */
+.carimbo { display:inline-block; margin:12px 0 0; padding:6px 16px; border:3px double var(--vermelho); border-radius:6px;
+  color:var(--vermelho); font-weight:800; font-size:1rem; letter-spacing:.08em; text-transform:uppercase; transform:rotate(-2deg); background:var(--papel); }
+.titulo-analise { display:flex; flex-wrap:wrap; align-items:center; gap:4px 18px; }
+.titulo-analise .carimbo { margin-top:18px; }
+.bt-relato { background:var(--papel); border:1px solid var(--azul); color:var(--azul); }
+.titulo-analise .bt-relato { margin-top:18px; margin-left:auto; }
+.rodape .relato { margin:0 0 10px; }
 #impressao { display:none; }
 @media print {
   body > *:not(#impressao) { display:none !important; }

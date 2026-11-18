@@ -8,6 +8,7 @@ window.FORMULARIOS['aforamento-gratuito'] = {
   "F08.009"
  ],
  "modelo_obs": "janela",
+ "carimbo": "Protótipo em validação",
  "titulo": "Formulário de Análise de Aforamento Gratuito",
  "origem": {
   "documento_sei": "61000481",

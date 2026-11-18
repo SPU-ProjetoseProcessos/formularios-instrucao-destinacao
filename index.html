@@ -39,6 +39,7 @@
     <h2 id="t-inicio"><span class="passo">1</span> Formulário</h2>
     <label class="campo largo-max"><span class="rot">Qual análise você vai fazer?</span>
       <select id="sel-form"><option value="">Escolha o formulário</option></select></label>
+    <p class="carimbo" id="carimbo-1" hidden></p>
   </section>
 
   <div id="corpo" hidden>
@@ -55,7 +56,9 @@
     </section>
 
     <section aria-labelledby="t-form">
-      <h2 id="t-form" class="solto"><span class="passo">4</span> Análise</h2>
+      <div class="titulo-analise"><h2 id="t-form" class="solto"><span class="passo">4</span> Análise</h2>
+        <p class="carimbo" id="carimbo-4" hidden></p>
+        <button type="button" id="relatar" class="bt-relato">Encontrou algo estranho neste formulário?</button></div>
       <p class="nota" id="legislacao"></p>
       <div id="formulario"></div>
     </section>
@@ -86,6 +89,7 @@
 </main>
 
 <footer class="rodape">
+  <p class="relato"><button type="button" id="fale" class="bt-relato">Fale com a equipe</button></p>
   <p class="assinatura">Desenvolvido por CGGES — <a href="https://spu-projetoseprocessos.github.io/escritorio/" target="_blank" rel="noopener">Escritório de Processos</a></p>
 </footer>
 
@@ -107,6 +111,7 @@
 <script src="dados-municipios.js"></script>
 <script src="formularios/inscricao-de-ocupacao.js"></script>
 <script src="formularios/aforamento-gratuito.js"></script>
+<script src="spu-caixinha.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
