@@ -294,7 +294,29 @@
     E.txt[nome] = texto;
     document.querySelectorAll('[data-motor="' + nome + '"]').forEach(function (i) { if (i !== origem) i.value = texto; });
     salvar();
-    if (recalcular) atualizar();
+    if (!recalcular) return;
+    var antes = { ass: assinaturaEnq, res: resumoEnq() };
+    atualizar();
+    if (origem && !origem.closest('#cartao-enq')) avisarEnquadramento(origem, antes);
+  }
+  function resumoEnq() { return G ? [G.manif ? G.manif.texto : '', G.comp ? G.comp.texto : ''].join('|') : ''; }
+  /* O que aparece por causa de uma resposta aparece logo abaixo dela (5ª rodada). Valor e área
+   * digitados num item do formulário mexem no enquadramento, que fica no alto da página: o aviso
+   * fica ao lado do campo, com o caminho até lá. */
+  function avisarEnquadramento(origem, antes) {
+    var lab = origem.closest('label') || origem.parentNode, p = lab.querySelector('.aviso-enq');
+    if (!p) { p = el('div', { class: 'aviso-enq', 'aria-live': 'polite' }); lab.appendChild(p); }
+    p.textContent = '';
+    var caso = $('enq-resultado').querySelector('.espera'), texto = '';
+    if (assinaturaEnq !== antes.ass && caso) texto = 'O enquadramento mudou: há pergunta nova a responder no alto da página.';
+    else if (resumoEnq() !== antes.res && G) texto = 'Enquadramento atualizado: ' + [G.manif ? G.manif.texto : '', G.comp ? 'quem decide: ' + G.comp.texto : ''].filter(Boolean).join('; ') + '.';
+    if (!texto) { p.hidden = true; return; }
+    var ir = el('button', { type: 'button', class: 'bt-link', text: 'Ir para o enquadramento' });
+    ir.addEventListener('click', function () {
+      $('cartao-enq').scrollIntoView({ block: 'start' });
+      var alvo = $('enq-outros').querySelector('input:not(:checked)') || $('enq-area'); if (alvo) { try { alvo.focus({ preventScroll: true }); } catch (e) { alvo.focus(); } }
+    });
+    p.appendChild(el('span', { text: texto + ' ' })); p.appendChild(ir); p.hidden = false;
   }
   function aplicarCondicional(r, autoridade) {
     if (!r.resultado_se) return { resultado: r.resultado, nota: null };
@@ -534,7 +556,17 @@
       { placeholder: 'Insira aqui as observações e ressalvas sobre este item.', maxlength: 3000 });
     campo.appendChild(el('p', { class: 'limite' }, ['Limite máximo de ', el('b', { text: '3.000' }), ' caracteres.']));
     campo.hidden = !aberto;
+    var lixeira = el('span', { class: 'lixeira', 'aria-hidden': 'true' });
+    lixeira.innerHTML = '<svg viewBox="0 0 24 24"><path d="M9 3h6l1 2h4v2H4V5h4zm-3 6h12l-1 12H7z" fill="currentColor"/></svg>';
+    var rem = el('button', { type: 'button', class: 'bt-remover' }, [lixeira, 'Remover observação']);
+    campo.appendChild(rem);
     bt.addEventListener('click', function () { bt.hidden = true; campo.hidden = false; campo.querySelector('textarea').focus(); });
+    rem.addEventListener('click', function () {
+      var ta = campo.querySelector('textarea');
+      if (cheio(ta.value) && !window.confirm('Remover a observação deste item?')) return;
+      ta.value = ''; resp(n).obs = ''; salvar(); atualizar();
+      campo.hidden = true; bt.hidden = false; bt.focus();
+    });
     caixa.appendChild(bt); caixa.appendChild(campo);
     return caixa;
   }
@@ -671,6 +703,8 @@
       if (it.tipo === 'uma' && typeof r.op === 'number') {
         var o = it.opcoes[r.op];
         if (o.alerta) alertas.push(o.alerta);
+        var co = it.coerencia;
+        if (co && co.em.indexOf(E.cond[co.cond]) >= 0 && co.ops.indexOf(r.op) < 0) alertas.push(co.texto);
         if (it.conclusao) concl = o;
         if (it.governanca) {
           var codigos = Array.isArray(it.governanca) ? it.governanca : ['cde'];

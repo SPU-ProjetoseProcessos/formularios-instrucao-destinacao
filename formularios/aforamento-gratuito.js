@@ -172,139 +172,26 @@ window.FORMULARIOS['aforamento-gratuito'] = {
      "n": "1.2",
      "titulo": "Nome ou razão social do requerente",
      "tipo": "texto",
-     "ajuda": "Informe o nome completo ou a razão social do requerente.",
-     "lembrete": [
-      {
-       "p": "1 - Deverá ser elaborada minuta de portaria autorizativa do(a) Secretário(a) quando presentes, cumulativamente, as seguintes hipóteses: (art. 74 da IN SPU nº 03/2016):",
-       "se": {
-        "algum": [
-         {
-          "item": "1.3",
-          "op": [
-           2,
-           3,
-           5,
-           7
-          ]
-         },
-         {
-          "cond": "T01",
-          "em": [
-           "sim"
-          ]
-         }
-        ]
-       }
-      },
-      {
-       "lista": [
-        "(I) pessoa estrangeira, física ou jurídica, ou pessoa jurídica brasileira cuja maioria do capital social pertença a pessoas físicas ou jurídicas estrangeiras;",
-        "(II) o terreno estiver localizado dentro da faixa de fronteiras, da faixa de 100 (cem) metros ao longo da costa marítima ou de uma circunferência de 1.320 (mil trezentos e vinte) metros de raio em torno das fortificações e estabelecimentos militares;",
-        "(III) o processo estiver apto a seguir para deliberação do órgão colegiado."
-       ],
-       "se": {
-        "algum": [
-         {
-          "item": "1.3",
-          "op": [
-           2,
-           3,
-           5,
-           7
-          ]
-         },
-         {
-          "cond": "T01",
-          "em": [
-           "sim"
-          ]
-         }
-        ]
-       }
-      },
-      {
-       "p": "2 - Fica dispensada a autorização para pessoa física ou jurídica estrangeira quando se tratar de unidade autônoma de condomínios, regulados pela Lei nº 4.591, de 16 de dezembro de 1964, desde que o imóvel esteja situado em zona urbana, e as frações ideais pretendidas, em seu conjunto, não ultrapassem 1/3 (um terço) de sua área total (art. 205, § 1º, DL 9.760/46).",
-       "se": {
-        "algum": [
-         {
-          "item": "1.3",
-          "op": [
-           2,
-           3,
-           5,
-           7
-          ]
-         },
-         {
-          "cond": "T01",
-          "em": [
-           "sim"
-          ]
-         }
-        ]
-       }
-      },
-      {
-       "p": "2.1 - Exclusivamente para pessoas físicas estrangeiras, fica dispensada a autorização quando se tratar de transferência de titularidade de terrenos de até mil metros quadrados situados dentro da faixa de cem metros ao longo da costa marítima (art. 205, § 3º, DL 9.760/1946). Por interpretação extensiva, esse entendimento também se aplica à constituição de aforamento sobre imóveis com as mesmas características.",
-       "se": {
-        "algum": [
-         {
-          "item": "1.3",
-          "op": [
-           2,
-           3,
-           5,
-           7
-          ]
-         },
-         {
-          "cond": "T01",
-          "em": [
-           "sim"
-          ]
-         }
-        ]
-       }
-      },
-      {
-       "p": "3 - IMÓVEL RURAL - observar o disposto na Lei nº 5.709, de 7 de outubro de 1971, que regula a aquisição de imóvel rural por estrangeiro residente no país ou pessoa jurídica estrangeira autorizada a funcionar no Brasil.",
-       "se": {
-        "todos": [
-         {
-          "algum": [
-           {
-            "item": "1.3",
-            "op": [
-             2,
-             3,
-             5,
-             7
-            ]
-           },
-           {
-            "cond": "T01",
-            "em": [
-             "sim"
-            ]
-           }
-          ]
-         },
-         {
-          "item": "2.4.1",
-          "op": [
-           2
-          ]
-         }
-        ]
-       }
-      }
-     ]
+     "ajuda": "Informe o nome completo ou a razão social do requerente."
     },
     {
      "n": "1.3",
      "titulo": "Natureza do interessado/beneficiário",
      "tipo": "uma",
      "sei": true,
+     "coerencia": {
+      "cond": "T01",
+      "em": [
+       "sim"
+      ],
+      "ops": [
+       2,
+       3,
+       5,
+       7
+      ],
+      "texto": "Item 1.3: o enquadramento diz que o destinatário é estrangeiro, mas a natureza marcada não é estrangeira. Confira um dos dois."
+     },
      "opcoes": [
       {
        "t": "Pessoa Física",
@@ -403,6 +290,60 @@ window.FORMULARIOS['aforamento-gratuito'] = {
          "fmt": "cnpj"
         }
        ]
+      }
+     ],
+     "lembrete": [
+      {
+       "p": "1 - Deverá ser elaborada minuta de portaria autorizativa do(a) Secretário(a) quando presentes, cumulativamente, as seguintes hipóteses: (art. 74 da IN SPU nº 03/2016):",
+       "se": {
+        "item": "1.3",
+        "op": [
+         2,
+         3,
+         5,
+         7
+        ]
+       }
+      },
+      {
+       "lista": [
+        "(I) pessoa estrangeira, física ou jurídica, ou pessoa jurídica brasileira cuja maioria do capital social pertença a pessoas físicas ou jurídicas estrangeiras;",
+        "(II) o terreno estiver localizado dentro da faixa de fronteiras, da faixa de 100 (cem) metros ao longo da costa marítima ou de uma circunferência de 1.320 (mil trezentos e vinte) metros de raio em torno das fortificações e estabelecimentos militares;",
+        "(III) o processo estiver apto a seguir para deliberação do órgão colegiado."
+       ],
+       "se": {
+        "item": "1.3",
+        "op": [
+         2,
+         3,
+         5,
+         7
+        ]
+       }
+      },
+      {
+       "p": "2 - Fica dispensada a autorização para pessoa física ou jurídica estrangeira quando se tratar de unidade autônoma de condomínios, regulados pela Lei nº 4.591, de 16 de dezembro de 1964, desde que o imóvel esteja situado em zona urbana, e as frações ideais pretendidas, em seu conjunto, não ultrapassem 1/3 (um terço) de sua área total (art. 205, § 1º, DL 9.760/46).",
+       "se": {
+        "item": "1.3",
+        "op": [
+         2,
+         3,
+         5,
+         7
+        ]
+       }
+      },
+      {
+       "p": "2.1 - Exclusivamente para pessoas físicas estrangeiras, fica dispensada a autorização quando se tratar de transferência de titularidade de terrenos de até mil metros quadrados situados dentro da faixa de cem metros ao longo da costa marítima (art. 205, § 3º, DL 9.760/1946). Por interpretação extensiva, esse entendimento também se aplica à constituição de aforamento sobre imóveis com as mesmas características.",
+       "se": {
+        "item": "1.3",
+        "op": [
+         2,
+         3,
+         5,
+         7
+        ]
+       }
       }
      ]
     },
@@ -672,6 +613,30 @@ window.FORMULARIOS['aforamento-gratuito'] = {
          "r": "Qual"
         }
        ]
+      }
+     ],
+     "lembrete": [
+      {
+       "p": "3 - IMÓVEL RURAL - observar o disposto na Lei nº 5.709, de 7 de outubro de 1971, que regula a aquisição de imóvel rural por estrangeiro residente no país ou pessoa jurídica estrangeira autorizada a funcionar no Brasil.",
+       "se": {
+        "todos": [
+         {
+          "item": "1.3",
+          "op": [
+           2,
+           3,
+           5,
+           7
+          ]
+         },
+         {
+          "item": "2.4.1",
+          "op": [
+           2
+          ]
+         }
+        ]
+       }
       }
      ]
     },

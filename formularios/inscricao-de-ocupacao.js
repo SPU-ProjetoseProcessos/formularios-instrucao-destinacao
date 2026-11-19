@@ -247,6 +247,19 @@ window.FORMULARIOS['inscricao-de-ocupacao'] = {
      "titulo": "Natureza do interessado/beneficiário",
      "tipo": "uma",
      "sei": true,
+     "coerencia": {
+      "cond": "T01",
+      "em": [
+       "sim"
+      ],
+      "ops": [
+       2,
+       3,
+       5,
+       7
+      ],
+      "texto": "Item 1.3: o enquadramento diz que o destinatário é estrangeiro, mas a natureza marcada não é estrangeira. Confira um dos dois."
+     },
      "opcoes": [
       {
        "t": "Pessoa Física",
@@ -351,22 +364,12 @@ window.FORMULARIOS['inscricao-de-ocupacao'] = {
       {
        "p": "Caso o interessado/requerente seja",
        "se": {
-        "algum": [
-         {
-          "item": "1.3",
-          "op": [
-           2,
-           3,
-           5,
-           7
-          ]
-         },
-         {
-          "cond": "T01",
-          "em": [
-           "sim"
-          ]
-         }
+        "item": "1.3",
+        "op": [
+         2,
+         3,
+         5,
+         7
         ]
        }
       },
@@ -377,66 +380,36 @@ window.FORMULARIOS['inscricao-de-ocupacao'] = {
         "(III) o processo estiver apto para outorga,"
        ],
        "se": {
-        "algum": [
-         {
-          "item": "1.3",
-          "op": [
-           2,
-           3,
-           5,
-           7
-          ]
-         },
-         {
-          "cond": "T01",
-          "em": [
-           "sim"
-          ]
-         }
+        "item": "1.3",
+        "op": [
+         2,
+         3,
+         5,
+         7
         ]
        }
       },
       {
        "p": "o analista deste Formulário deverá elaborar minuta de portaria autorizativa do Secretário,",
        "se": {
-        "algum": [
-         {
-          "item": "1.3",
-          "op": [
-           2,
-           3,
-           5,
-           7
-          ]
-         },
-         {
-          "cond": "T01",
-          "em": [
-           "sim"
-          ]
-         }
+        "item": "1.3",
+        "op": [
+         2,
+         3,
+         5,
+         7
         ]
        }
       },
       {
        "p": "dispensada apenas na hipótese em que a pessoa física estrangeira ocupar imóvel com até mil metros quadrados localizado na faixa de 100,00m ao longo da costa marítima. (art. 39 da IN SPU nº 04, de 2018).",
        "se": {
-        "algum": [
-         {
-          "item": "1.3",
-          "op": [
-           2,
-           3,
-           5,
-           7
-          ]
-         },
-         {
-          "cond": "T01",
-          "em": [
-           "sim"
-          ]
-         }
+        "item": "1.3",
+        "op": [
+         2,
+         3,
+         5,
+         7
         ]
        }
       }

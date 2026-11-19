@@ -154,6 +154,13 @@ button { font:inherit; cursor:pointer; }
 .bt-texto { background:transparent; color:var(--azul); border:0; }
 .bt-obs { background:transparent; color:var(--azul); border:0; padding-left:0; display:inline-flex; gap:10px; align-items:center; }
 .bt-obs[hidden] { display:none; }
+.bt-remover { display:inline-flex; align-items:center; gap:6px; margin-top:6px; background:none; border:0; padding:6px 0; color:var(--vermelho); font-size:1rem; font-weight:600; cursor:pointer; }
+.bt-remover:hover { text-decoration:underline; }
+.bt-remover .lixeira svg { width:18px; height:18px; display:block; }
+/* aviso ao lado do campo quando ele muda o enquadramento, que fica no alto da página */
+.aviso-enq { margin:6px 0 0; padding:8px 12px; background:var(--amarelo-claro); border-radius:4px; font-size:.95rem; }
+.aviso-enq[hidden] { display:none; }
+.bt-link { background:none; border:0; padding:0; color:var(--azul); font-weight:600; text-decoration:underline; cursor:pointer; font-size:inherit; }
 .obs .campo[hidden] { display:none; }
 /* ciência do lembrete: a marcação fica na própria caixa, separada do texto por uma linha */
 .lembrete .ciente { display:flex; align-items:center; gap:10px; margin-top:10px; padding-top:10px; border-top:1px solid rgba(7,29,65,.2); font-weight:600; cursor:pointer; }
