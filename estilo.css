@@ -197,3 +197,10 @@ button { font:inherit; cursor:pointer; }
   @page { margin:18mm 15mm; }
 
 }
+
+/* Texto que o formulário já traz pronto (requerente fixo, justificativa, autoridade): não se
+   preenche, mas vai para o documento. Fundo neutro e borda à esquerda dizem "já vem assim". */
+.fixo { background:var(--cinza); border-left:4px solid var(--linha-forte); padding:10px 14px; border-radius:4px; }
+.fixo p { margin:0 0 6px; }
+.fixo p:last-child { margin-bottom:0; }
+.cond-fixa { margin:4px 0 10px; }
