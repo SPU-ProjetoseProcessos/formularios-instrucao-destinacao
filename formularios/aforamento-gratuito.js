@@ -7,7 +7,6 @@ window.FORMULARIOS['aforamento-gratuito'] = {
  "fluxos": [
   "F08.009"
  ],
- "modelo_obs": "janela",
  "carimbo": "Protótipo em validação",
  "titulo": "Formulário de Análise de Aforamento Gratuito",
  "origem": {
@@ -171,28 +170,133 @@ window.FORMULARIOS['aforamento-gratuito'] = {
     },
     {
      "n": "1.2",
-     "titulo": "Especificação da(s) pessoa(s) física(s) ou jurídica(s) beneficiada(s) pelo ato",
+     "titulo": "Nome ou razão social do requerente",
      "tipo": "texto",
-     "ajuda": "Informar o nome completo da(s) pessoa(s) física(s) ou jurídica(s) beneficiária(s)",
+     "ajuda": "Informe o nome completo ou a razão social do requerente.",
      "lembrete": [
       {
-       "p": "1 - Deverá ser elaborada minuta de portaria autorizativa do(a) Secretário(a) quando presentes, cumulativamente, as seguintes hipóteses: (art. 74 da IN SPU nº 03/2016):"
+       "p": "1 - Deverá ser elaborada minuta de portaria autorizativa do(a) Secretário(a) quando presentes, cumulativamente, as seguintes hipóteses: (art. 74 da IN SPU nº 03/2016):",
+       "se": {
+        "algum": [
+         {
+          "item": "1.3",
+          "op": [
+           2,
+           3,
+           5,
+           7
+          ]
+         },
+         {
+          "cond": "T01",
+          "em": [
+           "sim"
+          ]
+         }
+        ]
+       }
       },
       {
        "lista": [
         "(I) pessoa estrangeira, física ou jurídica, ou pessoa jurídica brasileira cuja maioria do capital social pertença a pessoas físicas ou jurídicas estrangeiras;",
         "(II) o terreno estiver localizado dentro da faixa de fronteiras, da faixa de 100 (cem) metros ao longo da costa marítima ou de uma circunferência de 1.320 (mil trezentos e vinte) metros de raio em torno das fortificações e estabelecimentos militares;",
         "(III) o processo estiver apto a seguir para deliberação do órgão colegiado."
-       ]
+       ],
+       "se": {
+        "algum": [
+         {
+          "item": "1.3",
+          "op": [
+           2,
+           3,
+           5,
+           7
+          ]
+         },
+         {
+          "cond": "T01",
+          "em": [
+           "sim"
+          ]
+         }
+        ]
+       }
       },
       {
-       "p": "2 - Fica dispensada a autorização para pessoa física ou jurídica estrangeira quando se tratar de unidade autônoma de condomínios, regulados pela Lei nº 4.591, de 16 de dezembro de 1964, desde que o imóvel esteja situado em zona urbana, e as frações ideais pretendidas, em seu conjunto, não ultrapassem 1/3 (um terço) de sua área total (art. 205, § 1º, DL 9.760/46)."
+       "p": "2 - Fica dispensada a autorização para pessoa física ou jurídica estrangeira quando se tratar de unidade autônoma de condomínios, regulados pela Lei nº 4.591, de 16 de dezembro de 1964, desde que o imóvel esteja situado em zona urbana, e as frações ideais pretendidas, em seu conjunto, não ultrapassem 1/3 (um terço) de sua área total (art. 205, § 1º, DL 9.760/46).",
+       "se": {
+        "algum": [
+         {
+          "item": "1.3",
+          "op": [
+           2,
+           3,
+           5,
+           7
+          ]
+         },
+         {
+          "cond": "T01",
+          "em": [
+           "sim"
+          ]
+         }
+        ]
+       }
       },
       {
-       "p": "2.1 - Exclusivamente para pessoas físicas estrangeiras, fica dispensada a autorização quando se tratar de transferência de titularidade de terrenos de até mil metros quadrados situados dentro da faixa de cem metros ao longo da costa marítima (art. 205, § 3º, DL 9.760/1946). Por interpretação extensiva, esse entendimento também se aplica à constituição de aforamento sobre imóveis com as mesmas características."
+       "p": "2.1 - Exclusivamente para pessoas físicas estrangeiras, fica dispensada a autorização quando se tratar de transferência de titularidade de terrenos de até mil metros quadrados situados dentro da faixa de cem metros ao longo da costa marítima (art. 205, § 3º, DL 9.760/1946). Por interpretação extensiva, esse entendimento também se aplica à constituição de aforamento sobre imóveis com as mesmas características.",
+       "se": {
+        "algum": [
+         {
+          "item": "1.3",
+          "op": [
+           2,
+           3,
+           5,
+           7
+          ]
+         },
+         {
+          "cond": "T01",
+          "em": [
+           "sim"
+          ]
+         }
+        ]
+       }
       },
       {
-       "p": "3 - IMÓVEL RURAL - observar o disposto na Lei nº 5.709, de 7 de outubro de 1971, que regula a aquisição de imóvel rural por estrangeiro residente no país ou pessoa jurídica estrangeira autorizada a funcionar no Brasil."
+       "p": "3 - IMÓVEL RURAL - observar o disposto na Lei nº 5.709, de 7 de outubro de 1971, que regula a aquisição de imóvel rural por estrangeiro residente no país ou pessoa jurídica estrangeira autorizada a funcionar no Brasil.",
+       "se": {
+        "todos": [
+         {
+          "algum": [
+           {
+            "item": "1.3",
+            "op": [
+             2,
+             3,
+             5,
+             7
+            ]
+           },
+           {
+            "cond": "T01",
+            "em": [
+             "sim"
+            ]
+           }
+          ]
+         },
+         {
+          "item": "2.4.1",
+          "op": [
+           2
+          ]
+         }
+        ]
+       }
       }
      ]
     },
@@ -326,7 +430,16 @@ window.FORMULARIOS['aforamento-gratuito'] = {
      ],
      "lembrete": [
       {
-       "p": "Qualquer hipótese de prioridade deve estar comprovada nos autos por documento específico, de acordo com o art. 69-A da Lei 9.784/1999. Essas hipóteses de prioridade não se estendem ao representante legal da pessoa jurídica, já que o interessado é a própria pessoa jurídica."
+       "p": "Qualquer hipótese de prioridade deve estar comprovada nos autos por documento específico, de acordo com o art. 69-A da Lei 9.784/1999. Essas hipóteses de prioridade não se estendem ao representante legal da pessoa jurídica, já que o interessado é a própria pessoa jurídica.",
+       "se": {
+        "item": "1.4",
+        "op": [
+         1,
+         2,
+         3,
+         4
+        ]
+       }
       }
      ]
     },
@@ -367,6 +480,11 @@ window.FORMULARIOS['aforamento-gratuito'] = {
          "k": "data",
          "r": "Data",
          "fmt": "data"
+        },
+        {
+         "k": "proc",
+         "r": "Processo SEI de acompanhamento da ação judicial",
+         "fmt": "nup"
         }
        ]
       },
@@ -383,7 +501,13 @@ window.FORMULARIOS['aforamento-gratuito'] = {
      ],
      "lembrete": [
       {
-       "p": "a aplicação do regime enfitêutico pode se iniciar pela provocação do interessado, mas também por iniciativa da Administração, conforme disposições constantes nos arts. 12 e seguintes da Lei 9.636/98, bem como no art. 104 do DL 9.760/1946, em prejuízo de outras previsões legais no mesmo sentido."
+       "p": "a aplicação do regime enfitêutico pode se iniciar pela provocação do interessado, mas também por iniciativa da Administração, conforme disposições constantes nos arts. 12 e seguintes da Lei 9.636/98, bem como no art. 104 do DL 9.760/1946, em prejuízo de outras previsões legais no mesmo sentido.",
+       "se": {
+        "item": "1.5",
+        "op": [
+         3
+        ]
+       }
       }
      ]
     }
@@ -398,6 +522,11 @@ window.FORMULARIOS['aforamento-gratuito'] = {
      "titulo": "Endereço",
      "tipo": "campos",
      "campos": [
+      {
+       "k": "cep",
+       "r": "CEP",
+       "fmt": "cep"
+      },
       {
        "k": "estado",
        "r": "Estado",
@@ -415,11 +544,6 @@ window.FORMULARIOS['aforamento-gratuito'] = {
       {
        "k": "complemento",
        "r": "Complemento"
-      },
-      {
-       "k": "cep",
-       "r": "CEP",
-       "fmt": "cep"
       }
      ]
     },
@@ -506,10 +630,20 @@ window.FORMULARIOS['aforamento-gratuito'] = {
        "lista": [
         "1 - A certidão de matrícula/transcrição do imóvel deve estar anexada aos autos, sendo necessário proceder à abertura de matrícula em nome da União caso o imóvel não possua registro imobiliário, uma vez que a enfiteuse em nome do particular, como todo direito real, só se constitui com o devido assentamento no Cartório de Registro de Imóveis, nos termos do art. 1.227 do Código Civil.",
         "2 - Considerando que os termos, ajustes ou contratos lavrados pela SPU possuem força de escritura pública (art. 74 do Decreto-lei nº 9.760/46), orienta-se que as certidões de matrícula ou transcrição tenham data de expedição não superior a 30 (trinta) dias, a contar da sua apresentação à SPU/UF, em harmonia com o regramento que disciplina os atos notariais translativos de imóveis, em especial o Decreto nº 93.240/1986.",
-        "2.1 - Caso a certidão da matrícula ou transcrição apresentada nos termos acima perca sua validade no curso da instrução/análise processual, a SPU/UF deverá solicitá-la diretamente ao órgão ou entidade responsável, salvo quando possível sua obtenção por meio de ofício eletrônico, nos termos do Decreto nº 9.094/2017.",
+        "2.1 - Caso a certidão da matrícula ou transcrição apresentada nos termos acima perca sua validade no curso da instrução/análise processual, a SPU/UF deverá solicitá-la diretamente ao órgão ou entidade responsável, salvo quando possível sua obtenção por meio de ofício eletrônico, nos termos do Decreto nº 9.094/2017."
+       ]
+      },
+      {
+       "lista": [
         "3 - Caso o imóvel esteja em nome de terceiro, deverá ser promovida sua INCORPORAÇÃO ao patrimônio da União, nos termos do art. 5º da IN SPU nº 03/2016, observado o disposto nos Ofícios Circulares nº 2307/2024/MGI (SEI nº 47067367) e nº 890/2025/MGI (SEI nº 50485449).",
         "4 - Conforme a Súmula 496/STJ, os registros de propriedade particular de imóveis situados em terrenos de marinha não são oponíveis à União."
-       ]
+       ],
+       "se": {
+        "item": "2.3",
+        "op": [
+         1
+        ]
+       }
       }
      ]
     },
@@ -876,7 +1010,13 @@ window.FORMULARIOS['aforamento-gratuito'] = {
      ],
      "lembrete": [
       {
-       "p": "NÃO SE APLICA, em caso de imóvel inscrito em regime de Ocupação (art. 23-A, Lei 9.636/98)"
+       "p": "NÃO SE APLICA, em caso de imóvel inscrito em regime de Ocupação (art. 23-A, Lei 9.636/98)",
+       "se": {
+        "item": "2.4.3",
+        "op": [
+         1
+        ]
+       }
       }
      ]
     },
@@ -1546,10 +1686,22 @@ window.FORMULARIOS['aforamento-gratuito'] = {
      ],
      "lembrete": [
       {
-       "p": "1 - As audiências aos Comandos do Exército, Marinha e Aeronáutica são dispensadas se o imóvel estiver localizado em área urbana consolidada, conceituada nos termos do §2º, Inciso II, Art. 16-C, da Lei 9.636/1998, e art. 50 da IN SPU nº 03/2016, e fora da faixa de segurança, conforme §7º, do art. 100, do DL 9.760/1946. Não sendo caso de dispensa, deverão ser realizadas necessariamente as audiências aos três Comandos (Exército, Marinha e Aeronáutica) conforme alínea \"a\" do inciso I do art. 41 da IN SPU nº 03/2016, sendo que a consulta versará sobre zona determinada, devidamente caracterizada, evitando-se a consulta imóvel a imóvel, conforme previsão do art. 43, da IN SPU 03/2016."
+       "p": "1 - As audiências aos Comandos do Exército, Marinha e Aeronáutica são dispensadas se o imóvel estiver localizado em área urbana consolidada, conceituada nos termos do §2º, Inciso II, Art. 16-C, da Lei 9.636/1998, e art. 50 da IN SPU nº 03/2016, e fora da faixa de segurança, conforme §7º, do art. 100, do DL 9.760/1946. Não sendo caso de dispensa, deverão ser realizadas necessariamente as audiências aos três Comandos (Exército, Marinha e Aeronáutica) conforme alínea \"a\" do inciso I do art. 41 da IN SPU nº 03/2016, sendo que a consulta versará sobre zona determinada, devidamente caracterizada, evitando-se a consulta imóvel a imóvel, conforme previsão do art. 43, da IN SPU 03/2016.",
+       "se": {
+        "item": "3.3.1",
+        "op": [
+         0
+        ]
+       }
       },
       {
-       "p": "3 - Em se tratando de imóvel RURAL, a concessão de aforamento deverá ser precedida da audiência ao Conselho de Defesa Nacional (CDN), nos casos previstos na Lei nº 6.634/1979, observado o Decreto nº 85.064/1980 (PARECER SAJ N°1727/2011). Tal entendimento restou pacificado no Parecer SAJ N°1727/2011 — SBCF que excluiu do alcance da norma as áreas URBANAS, firmando a seguinte interpretação: \" a necessidade de assentimento prévio [do Conselho de Defesa Nacional] refere-se às alienações e concessões de terras públicas, o que exclui do alcance da norma as áreas urbanas como a do caso em tela.\" Desse modo, a consulta prévia ao CND é obrigatória somente no caso de imóveis situados em área RURAL. A ausência de manifestação do CND impede o prosseguimento do processo, conforme o parágrafo 1º do art. 42 da Lei nº 9.784/99."
+       "p": "3 - Em se tratando de imóvel RURAL, a concessão de aforamento deverá ser precedida da audiência ao Conselho de Defesa Nacional (CDN), nos casos previstos na Lei nº 6.634/1979, observado o Decreto nº 85.064/1980 (PARECER SAJ N°1727/2011). Tal entendimento restou pacificado no Parecer SAJ N°1727/2011 — SBCF que excluiu do alcance da norma as áreas URBANAS, firmando a seguinte interpretação: \" a necessidade de assentimento prévio [do Conselho de Defesa Nacional] refere-se às alienações e concessões de terras públicas, o que exclui do alcance da norma as áreas urbanas como a do caso em tela.\" Desse modo, a consulta prévia ao CND é obrigatória somente no caso de imóveis situados em área RURAL. A ausência de manifestação do CND impede o prosseguimento do processo, conforme o parágrafo 1º do art. 42 da Lei nº 9.784/99.",
+       "se": {
+        "item": "3.3.1",
+        "op": [
+         0
+        ]
+       }
       }
      ]
     },
@@ -1568,7 +1720,13 @@ window.FORMULARIOS['aforamento-gratuito'] = {
      ],
      "lembrete": [
       {
-       "p": "As audiências previstas no art. 100 do Decreto-Lei nº 9.760/1946 são OBRIGATÓRIAS se o imóvel estiver localizado em faixa de segurança"
+       "p": "As audiências previstas no art. 100 do Decreto-Lei nº 9.760/1946 são OBRIGATÓRIAS se o imóvel estiver localizado em faixa de segurança",
+       "se": {
+        "item": "3.3.2",
+        "op": [
+         0
+        ]
+       }
       }
      ]
     },
@@ -1622,7 +1780,13 @@ window.FORMULARIOS['aforamento-gratuito'] = {
      ],
      "lembrete": [
       {
-       "p": "As audiências aos Comandos do Exército, Marinha e Aeronáutica são dispensadas se o imóvel estiver localizado em área urbana consolidada, conceituada nos termos do §2º, Inciso II, Art. 16-C, da Lei 9.636/98, e art. 50 da IN SPU nº 03/2016, e fora da faixa de segurança, conforme §7º do art. 100 do DL 9.760/46. Não sendo caso de dispensa, deverão ser realizadas necessariamente as audiências aos três Comandos (Exército, Marinha e Aeronáutica) conforme alínea \"a\" do inciso I do art. 41 da IN SPU nº 03/2016."
+       "p": "As audiências aos Comandos do Exército, Marinha e Aeronáutica são dispensadas se o imóvel estiver localizado em área urbana consolidada, conceituada nos termos do §2º, Inciso II, Art. 16-C, da Lei 9.636/98, e art. 50 da IN SPU nº 03/2016, e fora da faixa de segurança, conforme §7º do art. 100 do DL 9.760/46. Não sendo caso de dispensa, deverão ser realizadas necessariamente as audiências aos três Comandos (Exército, Marinha e Aeronáutica) conforme alínea \"a\" do inciso I do art. 41 da IN SPU nº 03/2016.",
+       "se": {
+        "item": "3.3.3",
+        "op": [
+         0
+        ]
+       }
       }
      ]
     },
@@ -1676,7 +1840,13 @@ window.FORMULARIOS['aforamento-gratuito'] = {
      ],
      "lembrete": [
       {
-       "p": "As audiências aos Comandos do Exército, Marinha e Aeronáutica são dispensadas se o imóvel estiver localizado em área urbana consolidada, conceituada nos termos do §2º, Inciso II, Art. 16-C, da Lei 9.636/98, e art. 50 da IN SPU nº 03/2016, e fora da faixa de segurança, conforme §7º do art. 100 do DL 9.760/46. Não sendo caso de dispensa, deverão ser realizadas necessariamente as audiências aos três Comandos (Exército, Marinha e Aeronáutica) conforme alínea \"a\" do inciso I do art. 41 da IN SPU nº 03/2016."
+       "p": "As audiências aos Comandos do Exército, Marinha e Aeronáutica são dispensadas se o imóvel estiver localizado em área urbana consolidada, conceituada nos termos do §2º, Inciso II, Art. 16-C, da Lei 9.636/98, e art. 50 da IN SPU nº 03/2016, e fora da faixa de segurança, conforme §7º do art. 100 do DL 9.760/46. Não sendo caso de dispensa, deverão ser realizadas necessariamente as audiências aos três Comandos (Exército, Marinha e Aeronáutica) conforme alínea \"a\" do inciso I do art. 41 da IN SPU nº 03/2016.",
+       "se": {
+        "item": "3.3.4",
+        "op": [
+         0
+        ]
+       }
       }
      ]
     },
@@ -1730,7 +1900,13 @@ window.FORMULARIOS['aforamento-gratuito'] = {
      ],
      "lembrete": [
       {
-       "p": "As audiências aos Comandos do Exército, Marinha e Aeronáutica são dispensadas se o imóvel estiver localizado em área urbana consolidada, conceituada nos termos do §2º, Inciso II, Art. 16-C, da Lei 9.636/98, e art. 50 da IN SPU nº 03/2016, e fora da faixa de segurança, conforme §7º do art. 100 do DL 9.760/46. Não sendo caso de dispensa, deverão ser realizadas necessariamente as audiências aos três Comandos (Exército, Marinha e Aeronáutica) conforme alínea \"a\" do inciso I do art. 41 da IN SPU nº 03/2016."
+       "p": "As audiências aos Comandos do Exército, Marinha e Aeronáutica são dispensadas se o imóvel estiver localizado em área urbana consolidada, conceituada nos termos do §2º, Inciso II, Art. 16-C, da Lei 9.636/98, e art. 50 da IN SPU nº 03/2016, e fora da faixa de segurança, conforme §7º do art. 100 do DL 9.760/46. Não sendo caso de dispensa, deverão ser realizadas necessariamente as audiências aos três Comandos (Exército, Marinha e Aeronáutica) conforme alínea \"a\" do inciso I do art. 41 da IN SPU nº 03/2016.",
+       "se": {
+        "item": "3.3.5",
+        "op": [
+         0
+        ]
+       }
       }
      ]
     },
@@ -1854,7 +2030,13 @@ window.FORMULARIOS['aforamento-gratuito'] = {
      ],
      "lembrete": [
       {
-       "p": "As audiências aos Comandos do Exército, Marinha e Aeronáutica são dispensadas se o imóvel estiver localizado em área urbana consolidada, conceituada nos termos do §2º, Inciso II, Art. 16-C, da Lei 9.636/98, e art. 50 da IN SPU nº 03/2016, e fora da faixa de segurança, conforme §7º do art. 100 do DL 9.760/46. Não sendo caso de dispensa, deverão ser realizadas necessariamente as audiências aos três Comandos (Exército, Marinha e Aeronáutica) conforme alínea \"a\" do inciso I do art. 41 da IN SPU nº 03/2016."
+       "p": "As audiências aos Comandos do Exército, Marinha e Aeronáutica são dispensadas se o imóvel estiver localizado em área urbana consolidada, conceituada nos termos do §2º, Inciso II, Art. 16-C, da Lei 9.636/98, e art. 50 da IN SPU nº 03/2016, e fora da faixa de segurança, conforme §7º do art. 100 do DL 9.760/46. Não sendo caso de dispensa, deverão ser realizadas necessariamente as audiências aos três Comandos (Exército, Marinha e Aeronáutica) conforme alínea \"a\" do inciso I do art. 41 da IN SPU nº 03/2016.",
+       "se": {
+        "item": "3.3.6",
+        "op": [
+         0
+        ]
+       }
       }
      ]
     },
@@ -1904,7 +2086,13 @@ window.FORMULARIOS['aforamento-gratuito'] = {
      ],
      "lembrete": [
       {
-       "p": "As audiências aos Comandos do Exército, Marinha e Aeronáutica são dispensadas se o imóvel estiver localizado em área urbana consolidada, conceituada nos termos do §2º, Inciso II, Art. 16-C, da Lei 9.636/98, e art. 50 da IN SPU nº 03/2016, e fora da faixa de segurança, conforme §7º do art. 100 do DL 9.760/46. Não sendo caso de dispensa, deverão ser realizadas necessariamente as audiências aos três Comandos (Exército, Marinha e Aeronáutica) conforme alínea \"a\" do inciso I do art. 41 da IN SPU nº 03/2016."
+       "p": "As audiências aos Comandos do Exército, Marinha e Aeronáutica são dispensadas se o imóvel estiver localizado em área urbana consolidada, conceituada nos termos do §2º, Inciso II, Art. 16-C, da Lei 9.636/98, e art. 50 da IN SPU nº 03/2016, e fora da faixa de segurança, conforme §7º do art. 100 do DL 9.760/46. Não sendo caso de dispensa, deverão ser realizadas necessariamente as audiências aos três Comandos (Exército, Marinha e Aeronáutica) conforme alínea \"a\" do inciso I do art. 41 da IN SPU nº 03/2016.",
+       "se": {
+        "item": "3.3.7",
+        "op": [
+         0
+        ]
+       }
       }
      ]
     },
@@ -2045,7 +2233,13 @@ window.FORMULARIOS['aforamento-gratuito'] = {
      ],
      "lembrete": [
       {
-       "p": "A ausência de manifestação do Instituto Brasileiro do Meio Ambiente e dos Recursos Naturais Renováveis (IBAMA) impede o prosseguimento do processo, conforme o parágrafo 1º do art. 42 da Lei nº 9.784/99."
+       "p": "A ausência de manifestação do Instituto Brasileiro do Meio Ambiente e dos Recursos Naturais Renováveis (IBAMA) impede o prosseguimento do processo, conforme o parágrafo 1º do art. 42 da Lei nº 9.784/99.",
+       "se": {
+        "item": "3.3.9",
+        "op": [
+         0
+        ]
+       }
       }
      ]
     }
@@ -2190,13 +2384,45 @@ window.FORMULARIOS['aforamento-gratuito'] = {
      ],
      "lembrete": [
       {
-       "p": "Na hipótese de a proposta enquadrar-se na obrigatoriedade de manifestação prévia, conforme o APP Regime de Governança da Destinação, deverão ser adotadas as seguintes providências, conforme o caso:"
+       "p": "Na hipótese de a proposta enquadrar-se na obrigatoriedade de manifestação prévia, conforme o APP Regime de Governança da Destinação, deverão ser adotadas as seguintes providências, conforme o caso:",
+       "se": {
+        "algum": [
+         {
+          "item": "5.2",
+          "op": [
+           0
+          ]
+         },
+         {
+          "manif": [
+           "cde",
+           "ge_desup"
+          ]
+         }
+        ]
+       }
       },
       {
        "lista": [
         "a) Encaminhamento ao GE-DESUP : proceder ao cadastramento do processo no Portal Colaborativo, em observância à regra transitória prevista na Portaria MGI nº 11.384/2025;",
         "b) Encaminhamento à CDE : proceder ao cadastramento do processo no Sistema SPUNET, por meio do módulo Gestão/Catálogo de Imóveis, conforme disposto na Resolução CDE nº 5, de 19/03/2026, devendo o respectivo relatório de cadastramento ser anexado aos autos."
-       ]
+       ],
+       "se": {
+        "algum": [
+         {
+          "item": "5.2",
+          "op": [
+           0
+          ]
+         },
+         {
+          "manif": [
+           "cde",
+           "ge_desup"
+          ]
+         }
+        ]
+       }
       }
      ]
     }

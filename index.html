@@ -4,6 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Formulários de Instrução de Destinação</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap">
 <link rel="stylesheet" href="estilo.css">
 </head>
 <body>
@@ -11,97 +13,107 @@
 <header class="topo">
   <div class="faixa">
     <span class="marca">
-      <span class="marca-nome"><b>Formulários</b> <span>de Instrução</span></span>
       <span class="marca-barras" aria-hidden="true">
+        <i style="height:12px;background:var(--marca-1)"></i>
+        <i style="height:20px;background:var(--marca-2)"></i>
+        <i style="height:26px;background:var(--marca-3)"></i>
+        <i style="height:17px;background:var(--marca-4)"></i>
         <i style="height:9px;background:var(--marca-1)"></i>
-        <i style="height:15px;background:var(--marca-2)"></i>
-        <i style="height:20px;background:var(--marca-3)"></i>
-        <i style="height:13px;background:var(--marca-4)"></i>
-        <i style="height:7px;background:var(--marca-1)"></i>
       </span>
+      <span class="marca-texto"><b>Formulários de Instrução</b><span>Secretaria do Patrimônio da União</span></span>
     </span>
-    <div class="modulo">
-      <strong>Análise da destinação, pronta para o SEI</strong>
-      <span>Protótipo para validação · não use em processo real</span>
-    </div>
-    <nav class="links">
-      <a href="https://spu-projetoseprocessos.github.io/simulador-competencia-spu/" target="_blank" rel="noopener">Governança da Destinação <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
-      <a href="https://spu-projetoseprocessos.github.io/SPUProcessos/" target="_blank" rel="noopener">SPUProcessos <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
-      <a href="https://spu-projetoseprocessos.github.io/escritorio/" target="_blank" rel="noopener">Página do Escritório <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
+    <nav class="links" aria-label="Outras ferramentas">
+      <a href="https://spu-projetoseprocessos.github.io/simulador-competencia-spu/" target="_blank" rel="noopener">Governança da Destinação</a>
+      <a href="https://spu-projetoseprocessos.github.io/SPUProcessos/" target="_blank" rel="noopener">SPUProcessos</a>
+      <a href="https://spu-projetoseprocessos.github.io/escritorio/" target="_blank" rel="noopener">Página do Escritório</a>
     </nav>
   </div>
 </header>
 
 <main id="app">
-  <p class="erro" id="erro-carga" hidden></p>
+  <nav class="trilha" aria-label="Você está em">
+    <a href="https://spu-projetoseprocessos.github.io/escritorio/" target="_blank" rel="noopener" aria-label="Página do Escritório">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2 12h3v8h5v-6h4v6h5v-8h3z" fill="currentColor"/></svg></a>
+    <span aria-hidden="true">›</span><span>Formulários de Instrução</span>
+    <span id="trilha-form" hidden><span aria-hidden="true">›</span><span id="trilha-nome"></span></span>
+  </nav>
 
-  <section class="cartao" aria-labelledby="t-inicio">
-    <h2 id="t-inicio"><span class="passo">1</span> Formulário</h2>
-    <label class="campo largo-max"><span class="rot">Qual análise você vai fazer?</span>
-      <select id="sel-form"><option value="">Escolha o formulário</option></select></label>
-    <p class="carimbo" id="carimbo-1" hidden></p>
+  <div class="cabeca-pagina">
+    <h1>Análise da destinação</h1>
+    <p class="etiqueta-situacao" id="carimbo-topo" hidden></p>
+  </div>
+  <p class="lide">Repositório dos formulários padronizados de instrução dos processos de destinação
+    (Portaria SPU/MGI nº 8.809/2026).</p>
+  <p class="aviso-prototipo">Protótipo para validação — não use em processo real.</p>
+
+
+  <div class="mensagem erro" id="erro-carga" hidden></div>
+
+  <section class="bloco-pagina" id="sec-1" aria-labelledby="t-inicio">
+    <h2 id="t-inicio">Formulário</h2>
+    <div class="questao">
+      <label class="campo largo-max" for="sel-form"><span class="rot">Qual análise você vai fazer?</span></label>
+      <select id="sel-form"><option value="">Selecione uma opção</option></select>
+    </div>
   </section>
 
   <div id="corpo" hidden>
-    <section class="cartao" id="cartao-enq" aria-labelledby="t-enq">
-      <h2 id="t-enq"><span class="passo">2</span> Enquadramento: quem se manifesta e quem decide</h2>
-      <p class="nota">O resultado vem da Governança da Destinação.</p>
+    <section class="bloco-pagina" id="cartao-enq" aria-labelledby="t-enq">
+      <h2 id="t-enq">Enquadramento</h2>
+      <p class="subtitulo">Quem se manifesta antes e quem decide. O resultado vem da Governança da Destinação.</p>
       <div id="enq-campos" class="enq-campos"></div>
       <div id="enq-resultado" class="resultado" aria-live="polite"></div>
     </section>
 
-    <section class="cartao" aria-labelledby="t-fluxo">
-      <h2 id="t-fluxo"><span class="passo">3</span> Fluxo do processo no SPUProcessos</h2>
+    <section class="bloco-pagina" id="sec-3" aria-labelledby="t-fluxo">
+      <h2 id="t-fluxo">Fluxo do processo no SPUProcessos</h2>
       <div id="fluxos"></div>
     </section>
 
-    <section aria-labelledby="t-form">
-      <div class="titulo-analise"><h2 id="t-form" class="solto"><span class="passo">4</span> Análise</h2>
-        <p class="carimbo" id="carimbo-4" hidden></p>
-        <button type="button" id="relatar" class="bt-relato">Encontrou algo estranho neste formulário?</button></div>
-      <p class="nota" id="legislacao"></p>
+    <section class="bloco-pagina" id="sec-4" aria-labelledby="t-form">
+      <h2 id="t-form">Análise</h2>
+      <p class="subtitulo leis" id="legislacao"></p>
       <div id="formulario"></div>
     </section>
 
-    <section class="cartao" aria-labelledby="t-saida">
-      <h2 id="t-saida"><span class="passo">5</span> Conferir e levar para o SEI</h2>
+    <section class="bloco-pagina" id="sec-5" aria-labelledby="t-saida">
+      <h2 id="t-saida">Conclusão</h2>
       <div id="atencao"></div>
-      <div class="acoes">
-        <button type="button" class="principal" id="bt-copiar">Copiar para o SEI</button>
-        <button type="button" id="bt-imprimir">Imprimir ou salvar em PDF</button>
-        <button type="button" id="bt-limpar">Limpar tudo</button>
-        <span class="status" id="status" role="status"></span>
+      <details class="sanfona" id="previa-det"><summary>Ver o documento como vai sair</summary><div class="previa" id="previa"></div></details>
+      <div class="mensagem info orienta">
+        <span class="icone" aria-hidden="true">i</span>
+        <div>
+          <p class="titulo-msg">Depois de colar no SEI</p>
+          <ul>
+            <li>O cabeçalho da unidade e a assinatura são do próprio SEI.</li>
+            <li>Os documentos citados chegam como texto, no formato "(Doc. SEI nº 12345678)". Para virarem link, use o
+              botão de link do editor do SEI em cada número. Com a extensão SEI Pro, dá para converter todos de uma vez:
+              na janela de link do SEI (Ctrl+Shift+L), "Converter todos os números do texto".</li>
+            <li>As imagens de satélite e as fotografias são inseridas no SEI, nos lugares marcados.</li>
+          </ul>
+        </div>
       </div>
-      <div class="orienta">
-        <h3>Depois de colar no SEI</h3>
-        <ul>
-          <li>O cabeçalho da unidade e a assinatura são do próprio SEI.</li>
-          <li>Os documentos citados chegam como texto, no formato "(Doc. SEI nº 12345678)". Para virarem link, use o
-            botão de link do editor do SEI em cada número. Com a extensão SEI Pro, dá para converter todos de uma vez:
-            na janela de link do SEI (Ctrl+Shift+L), "Converter todos os números do texto".</li>
-          <li>As imagens dos itens 2.14 e 2.15 são inseridas no SEI, nos lugares marcados.</li>
-        </ul>
-      </div>
-      <details id="previa-det"><summary>Ver o documento como vai sair</summary><div class="previa" id="previa"></div></details>
       <p class="nota">O que você digita fica guardado só neste navegador, neste computador.</p>
+      <div class="barra-acoes">
+        <div class="lado">
+          <button type="button" class="bt-texto" id="bt-limpar">Limpar formulário</button>
+        </div>
+        <div class="lado">
+          <button type="button" class="bt-secundario" id="bt-imprimir">Imprimir ou salvar em PDF</button>
+          <button type="button" class="bt-primario" id="bt-copiar">Copiar para o SEI</button>
+        </div>
+      </div>
+      <p class="status" id="status" role="status"></p>
     </section>
   </div>
 </main>
 
 <footer class="rodape">
-  <p class="relato"><button type="button" id="fale" class="bt-relato">Fale com a equipe</button></p>
-  <p class="assinatura">Desenvolvido por CGGES — <a href="https://spu-projetoseprocessos.github.io/escritorio/" target="_blank" rel="noopener">Escritório de Processos</a></p>
+  <div class="faixa">
+    <p class="assinatura">Desenvolvido por CGGES — <a href="https://spu-projetoseprocessos.github.io/escritorio/" target="_blank" rel="noopener">Escritório de Processos</a></p>
+    <button type="button" id="fale" class="bt-rodape">Fale com a equipe</button>
+  </div>
 </footer>
-
-<dialog id="janela-obs" aria-labelledby="janela-titulo">
-  <h3 id="janela-titulo"></h3>
-  <div id="janela-lembrete"></div>
-  <label class="campo"><span class="rot">Observações e ressalvas</span>
-    <textarea id="janela-texto" rows="8"></textarea></label>
-  <p class="nota">"Observação" esclarece, informa ou orienta sem alterar a conclusão. "Ressalva" limita, condiciona ou
-    excepciona uma conclusão.</p>
-  <div class="acoes"><button type="button" class="principal" id="janela-concluir">Concluir</button></div>
-</dialog>
 
 <div id="impressao" aria-hidden="true"></div>
 

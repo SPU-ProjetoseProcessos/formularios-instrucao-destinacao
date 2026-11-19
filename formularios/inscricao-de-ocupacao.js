@@ -233,9 +233,9 @@ window.FORMULARIOS['inscricao-de-ocupacao'] = {
     },
     {
      "n": "1.2",
-     "titulo": "Especificação da(s) pessoa(s) física(s) ou jurídica(s) beneficiada(s) pelo ato",
+     "titulo": "Nome ou razão social do requerente",
      "tipo": "texto",
-     "ajuda": "Informar o nome",
+     "ajuda": "Informe o nome completo ou a razão social do requerente.",
      "lembrete": [
       {
        "p": "Deverá ser inscrito o ocupante atual (que tem a posse/detenção do imóvel), nos termos do Art. 7º, §4º e 5º, da Lei 9.636/98."
@@ -349,20 +349,96 @@ window.FORMULARIOS['inscricao-de-ocupacao'] = {
      ],
      "lembrete": [
       {
-       "p": "Caso o interessado/requerente seja"
+       "p": "Caso o interessado/requerente seja",
+       "se": {
+        "algum": [
+         {
+          "item": "1.3",
+          "op": [
+           2,
+           3,
+           5,
+           7
+          ]
+         },
+         {
+          "cond": "T01",
+          "em": [
+           "sim"
+          ]
+         }
+        ]
+       }
       },
       {
        "lista": [
         "(I) de nacionalidade estrangeira ou pessoa jurídica brasileira cujo maioria do capital social pertença à pessoa estrangeira,",
         "(II) o imóvel estiver localizado dentro da faixa de 100,00m ao longo da costa marítima ou dentro do raio de 1.320,00m em torno das fortificações e estabelecimentos militares, bem assim",
         "(III) o processo estiver apto para outorga,"
-       ]
+       ],
+       "se": {
+        "algum": [
+         {
+          "item": "1.3",
+          "op": [
+           2,
+           3,
+           5,
+           7
+          ]
+         },
+         {
+          "cond": "T01",
+          "em": [
+           "sim"
+          ]
+         }
+        ]
+       }
       },
       {
-       "p": "o analista deste Formulário deverá elaborar minuta de portaria autorizativa do Secretário,"
+       "p": "o analista deste Formulário deverá elaborar minuta de portaria autorizativa do Secretário,",
+       "se": {
+        "algum": [
+         {
+          "item": "1.3",
+          "op": [
+           2,
+           3,
+           5,
+           7
+          ]
+         },
+         {
+          "cond": "T01",
+          "em": [
+           "sim"
+          ]
+         }
+        ]
+       }
       },
       {
-       "p": "dispensada apenas na hipótese em que a pessoa física estrangeira ocupar imóvel com até mil metros quadrados localizado na faixa de 100,00m ao longo da costa marítima. (art. 39 da IN SPU nº 04, de 2018)."
+       "p": "dispensada apenas na hipótese em que a pessoa física estrangeira ocupar imóvel com até mil metros quadrados localizado na faixa de 100,00m ao longo da costa marítima. (art. 39 da IN SPU nº 04, de 2018).",
+       "se": {
+        "algum": [
+         {
+          "item": "1.3",
+          "op": [
+           2,
+           3,
+           5,
+           7
+          ]
+         },
+         {
+          "cond": "T01",
+          "em": [
+           "sim"
+          ]
+         }
+        ]
+       }
       }
      ]
     },
@@ -433,6 +509,11 @@ window.FORMULARIOS['inscricao-de-ocupacao'] = {
          "k": "data",
          "r": "Data",
          "fmt": "data"
+        },
+        {
+         "k": "proc",
+         "r": "Processo SEI de acompanhamento da ação judicial",
+         "fmt": "nup"
         }
        ]
       }
@@ -451,6 +532,11 @@ window.FORMULARIOS['inscricao-de-ocupacao'] = {
      "sei": true,
      "campos": [
       {
+       "k": "cep",
+       "r": "CEP",
+       "fmt": "cep"
+      },
+      {
        "k": "estado",
        "r": "Estado",
        "fmt": "uf"
@@ -467,11 +553,6 @@ window.FORMULARIOS['inscricao-de-ocupacao'] = {
       {
        "k": "complemento",
        "r": "Complemento"
-      },
-      {
-       "k": "cep",
-       "r": "CEP",
-       "fmt": "cep"
       }
      ]
     },
@@ -512,22 +593,52 @@ window.FORMULARIOS['inscricao-de-ocupacao'] = {
      ],
      "lembrete": [
       {
-       "p": "Conforme o Art. 29, da Lei nº 12.651/2012, é obrigatória a inclusão do imóvel rural no Cadastro Ambiental Rural (CAR) e do Certificado de Cadastro de Imóveis Rurais (CCIR), conforme a Lei nº 5.868/1972 (SNCR-Sistema Nacional de Cadastro Rural) e Lei nº 10.267/2001."
+       "p": "Conforme o Art. 29, da Lei nº 12.651/2012, é obrigatória a inclusão do imóvel rural no Cadastro Ambiental Rural (CAR) e do Certificado de Cadastro de Imóveis Rurais (CCIR), conforme a Lei nº 5.868/1972 (SNCR-Sistema Nacional de Cadastro Rural) e Lei nº 10.267/2001.",
+       "se": {
+        "item": "2.2",
+        "op": [
+         1
+        ]
+       }
       },
       {
-       "p": "O Certificado de Cadastro de Imóvel Rural - CCIR é documento emitido pelo Incra e constitui prova do cadastro do imóvel rural."
+       "p": "O Certificado de Cadastro de Imóvel Rural - CCIR é documento emitido pelo Incra e constitui prova do cadastro do imóvel rural.",
+       "se": {
+        "item": "2.2",
+        "op": [
+         1
+        ]
+       }
       },
       {
-       "p": "O certificado é indispensável para desmembrar, remembrar, arrendar, hipotecar, vender ou prometer em venda o imóvel rural e para homologação de partilha amigável ou judicial (sucessão causa mortis) de acordo com os parágrafos 1º e 2º do artigo 22 da Lei 4.947, de 6 de abril de 1966, modificado pelo artigo 1º da Lei 10.267, de 28 de agosto de 2001."
+       "p": "O certificado é indispensável para desmembrar, remembrar, arrendar, hipotecar, vender ou prometer em venda o imóvel rural e para homologação de partilha amigável ou judicial (sucessão causa mortis) de acordo com os parágrafos 1º e 2º do artigo 22 da Lei 4.947, de 6 de abril de 1966, modificado pelo artigo 1º da Lei 10.267, de 28 de agosto de 2001.",
+       "se": {
+        "item": "2.2",
+        "op": [
+         1
+        ]
+       }
       },
       {
-       "sub": "Consultas:"
+       "sub": "Consultas:",
+       "se": {
+        "item": "2.2",
+        "op": [
+         1
+        ]
+       }
       },
       {
        "lista": [
         "CCIR: Consulta Pública (serpro.gov.br)",
         "CAR: Sicar - Sistema Nacional de Cadastro Ambiental Rural"
-       ]
+       ],
+       "se": {
+        "item": "2.2",
+        "op": [
+         1
+        ]
+       }
       }
      ]
     },
@@ -563,7 +674,11 @@ window.FORMULARIOS['inscricao-de-ocupacao'] = {
      ],
      "lembrete": [
       {
-       "p": "Em caso de imóvel com área igual ou superior a 500.000m², elaborar minuta de portaria autorizativa do Secretário, nos termos do art. 19 da IN 04/2018."
+       "p": "Em caso de imóvel com área igual ou superior a 500.000m², elaborar minuta de portaria autorizativa do Secretário, nos termos do art. 19 da IN 04/2018.",
+       "se": {
+        "motor": "area",
+        "min": 500000
+       }
       }
      ]
     },
@@ -755,10 +870,21 @@ window.FORMULARIOS['inscricao-de-ocupacao'] = {
       {
        "lista": [
         "1. Conforme a Súmula 496 do Superior Tribunal de Justiça - STJ, os registros de propriedade particular de imóveis situados em terrenos de marinha não são oponíveis à União.",
-        "2. Segundo a Súmula 619 do STJ, a ocupação indevida de bem público configura mera detenção, de natureza precária, insuscetível de retenção ou indenização por acessões e benfeitorias.",
+        "2. Segundo a Súmula 619 do STJ, a ocupação indevida de bem público configura mera detenção, de natureza precária, insuscetível de retenção ou indenização por acessões e benfeitorias."
+       ]
+      },
+      {
+       "lista": [
         "3. A SPU/UF deve observar a data de emissão das certidões de matrícula ou transcrição do imóvel, as quais devem ser inferior ou igual a 30 (trinta) dias à data de sua apresentação à Superintendência, em harmonia com o regramento que disciplina os atos notariais translativos de imóveis, em especial o Decreto nº 93.240/1986, considerando que os termos, ajustes ou contratos lavrados pela SPU possuem força de escritura pública (art. 74 do Decreto-lei nº 9.760/46).",
         "4. Em cumprimento ao art. 2º do Decreto nº 9.094/2017, a SPU/UF deverá utilizar o sistema de Ofício Eletrônico, para obter diretamente a certidão de matrícula ou transcrição atualizada do imóvel, integrando-a ao processo administrativo. A exigência de tais documentos ao usuário do serviço público somente será admitida caso as informações constantes na base de dados consultada sejam insuficientes ou se houver impedimento técnico devidamente justificado para a obtenção direta pelo órgão."
-       ]
+       ],
+       "se": {
+        "item": "2.9",
+        "op": [
+         0,
+         1
+        ]
+       }
       }
      ]
     },
@@ -1092,34 +1218,104 @@ window.FORMULARIOS['inscricao-de-ocupacao'] = {
      ],
      "lembrete": [
       {
-       "p": "Esclarece-se que os pareceres anexados não autorizam concluir pela dispensa automática de consulta ao Conselho de Defesa Nacional - CDN em toda e qualquer hipótese de destinação de imóvel da União situado em faixa de fronteira."
+       "p": "Esclarece-se que os pareceres anexados não autorizam concluir pela dispensa automática de consulta ao Conselho de Defesa Nacional - CDN em toda e qualquer hipótese de destinação de imóvel da União situado em faixa de fronteira.",
+       "se": {
+        "item": "3.3.1",
+        "op": [
+         0,
+         1
+        ]
+       }
       },
       {
-       "p": "O entendimento que deles se extrai é mais específico: a exigência de assentimento prévio prevista no art. 2º, inciso I, da Lei nº 6.634/79, não incide quando o ato praticado não envolve alienação nem concessão de terra pública rural, especialmente quando se trata de imóvel urbano e sem transferência de domínio."
+       "p": "O entendimento que deles se extrai é mais específico: a exigência de assentimento prévio prevista no art. 2º, inciso I, da Lei nº 6.634/79, não incide quando o ato praticado não envolve alienação nem concessão de terra pública rural, especialmente quando se trata de imóvel urbano e sem transferência de domínio.",
+       "se": {
+        "item": "3.3.1",
+        "op": [
+         0,
+         1
+        ]
+       }
       },
       {
-       "p": "Nesse sentido, o Parecer SAJ nº 1727/2011-SBCF assentou que a exigência legal de assentimento prévio se refere às hipóteses de alienação e concessão de terras públicas, compreendidas, naquele contexto, como imóveis rurais, razão pela qual não se aplicaria ao caso de cessão de uso de área urbana."
+       "p": "Nesse sentido, o Parecer SAJ nº 1727/2011-SBCF assentou que a exigência legal de assentimento prévio se refere às hipóteses de alienação e concessão de terras públicas, compreendidas, naquele contexto, como imóveis rurais, razão pela qual não se aplicaria ao caso de cessão de uso de área urbana.",
+       "se": {
+        "item": "3.3.1",
+        "op": [
+         0,
+         1
+        ]
+       }
       },
       {
-       "p": "O Parecer nº 0110-5.12/2011/MAA/CONJUR/MP, embora tenha registrado ressalva quanto à interpretação restritiva então adotada e defendido o encaminhamento da matéria à SAJ/PR, reconheceu que o entendimento do GSI era no sentido de que a cessão de uso não se subsumia ao art. 2º, inciso I, da Lei nº 6.634/1979, justamente por não implicar transferência de domínio."
+       "p": "O Parecer nº 0110-5.12/2011/MAA/CONJUR/MP, embora tenha registrado ressalva quanto à interpretação restritiva então adotada e defendido o encaminhamento da matéria à SAJ/PR, reconheceu que o entendimento do GSI era no sentido de que a cessão de uso não se subsumia ao art. 2º, inciso I, da Lei nº 6.634/1979, justamente por não implicar transferência de domínio.",
+       "se": {
+        "item": "3.3.1",
+        "op": [
+         0,
+         1
+        ]
+       }
       },
       {
-       "p": "Posteriormente, a Nota - AP nº 109/2017-RF/GSI reiterou essa compreensão, ao afirmar a desnecessidade de assentimento prévio em hipótese de cessão de uso onerosa de área da União situada em faixa de fronteira, por não haver alienação, concessão com transferência definitiva do domínio, nem incidência sobre imóvel rural."
+       "p": "Posteriormente, a Nota - AP nº 109/2017-RF/GSI reiterou essa compreensão, ao afirmar a desnecessidade de assentimento prévio em hipótese de cessão de uso onerosa de área da União situada em faixa de fronteira, por não haver alienação, concessão com transferência definitiva do domínio, nem incidência sobre imóvel rural.",
+       "se": {
+        "item": "3.3.1",
+        "op": [
+         0,
+         1
+        ]
+       }
       },
       {
-       "p": "À luz dessa orientação, entende-se que a mesma lógica pode ser aplicada à inscrição de ocupação."
+       "p": "À luz dessa orientação, entende-se que a mesma lógica pode ser aplicada à inscrição de ocupação.",
+       "se": {
+        "item": "3.3.1",
+        "op": [
+         0,
+         1
+        ]
+       }
       },
       {
-       "p": "Isso porque a inscrição de ocupação, em regra, não importa transferência de domínio, não configura alienação e não se confunde com concessão de terra pública rural nos termos do art. 2º, inciso I, da Lei nº 6.634/1979. Trata-se, ao contrário, de ato administrativo de natureza precária, transitória e resolúvel, voltado à regularização da ocupação, e não à outorga dominial."
+       "p": "Isso porque a inscrição de ocupação, em regra, não importa transferência de domínio, não configura alienação e não se confunde com concessão de terra pública rural nos termos do art. 2º, inciso I, da Lei nº 6.634/1979. Trata-se, ao contrário, de ato administrativo de natureza precária, transitória e resolúvel, voltado à regularização da ocupação, e não à outorga dominial.",
+       "se": {
+        "item": "3.3.1",
+        "op": [
+         0,
+         1
+        ]
+       }
       },
       {
-       "p": "Ressalta-se, contudo, que essa conclusão decorre de interpretação jurídica por analogia da fundamentação adotada nos pareceres anexados, uma vez que os precedentes examinados tratam diretamente de cessão de uso, e não especificamente de inscrição de ocupação."
+       "p": "Ressalta-se, contudo, que essa conclusão decorre de interpretação jurídica por analogia da fundamentação adotada nos pareceres anexados, uma vez que os precedentes examinados tratam diretamente de cessão de uso, e não especificamente de inscrição de ocupação.",
+       "se": {
+        "item": "3.3.1",
+        "op": [
+         0,
+         1
+        ]
+       }
       },
       {
-       "p": "Ainda assim, a razão central que sustenta tais manifestações, a ausência de transferência de domínio e a consequente não incidência do art. 2º, inciso I, da Lei nº 6.634/1979, permite, em princípio, estender o mesmo entendimento à inscrição de ocupação."
+       "p": "Ainda assim, a razão central que sustenta tais manifestações, a ausência de transferência de domínio e a consequente não incidência do art. 2º, inciso I, da Lei nº 6.634/1979, permite, em princípio, estender o mesmo entendimento à inscrição de ocupação.",
+       "se": {
+        "item": "3.3.1",
+        "op": [
+         0,
+         1
+        ]
+       }
       },
       {
-       "p": "Link para consulta: Municípios da Faixa de Fronteira 2021 e Listagem de Municípios em Faixa de Fronteira 2021 (fonte IBGE)"
+       "p": "Link para consulta: Municípios da Faixa de Fronteira 2021 e Listagem de Municípios em Faixa de Fronteira 2021 (fonte IBGE)",
+       "se": {
+        "item": "3.3.1",
+        "op": [
+         0,
+         1
+        ]
+       }
       }
      ]
     },
@@ -1317,13 +1513,43 @@ window.FORMULARIOS['inscricao-de-ocupacao'] = {
      ],
      "lembrete": [
       {
-       "p": "Nos casos de obrigatoriedade de manifestação prévia da CDE, a SPU/UF deverá, antes do prosseguimento da análise, verificar se consta nos autos a respectiva Ata de Reunião da Comissão."
+       "p": "Nos casos de obrigatoriedade de manifestação prévia da CDE, a SPU/UF deverá, antes do prosseguimento da análise, verificar se consta nos autos a respectiva Ata de Reunião da Comissão.",
+       "se": {
+        "algum": [
+         {
+          "item": "5.2",
+          "op": [
+           0
+          ]
+         },
+         {
+          "manif": [
+           "cde"
+          ]
+         }
+        ]
+       }
       },
       {
        "lista": [
         "Caso o processo já tenha sido submetido à CDE, mas não conste nos autos a comprovação da manifestação, a SPU/UF deverá localizar e juntar o respectivo documento ao processo.",
         "Caso seja constatado que o processo não foi previamente submetido à CDE, a SPU/UF deverá cadastrar o processo no Sistema SPUNET, módulo Gestão/Catálogo de Imóveis, nos termos da Resolução CDE nº 5, de 19/03/2026, anexar aos autos o relatório de cadastramento e aguardar a juntada da manifestação da Comissão para continuidade da instrução processual."
-       ]
+       ],
+       "se": {
+        "algum": [
+         {
+          "item": "5.2",
+          "op": [
+           0
+          ]
+         },
+         {
+          "manif": [
+           "cde"
+          ]
+         }
+        ]
+       }
       }
      ]
     }

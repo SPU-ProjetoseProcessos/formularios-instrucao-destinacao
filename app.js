@@ -132,10 +132,6 @@
       try { inp.setSelectionRange(p, p); } catch (e) { /* tipo sem seleção */ }
     }
   }
-  function dvNup(d) {
-    var s = 0; for (var i = 0; i < d.length; i++) s += +d[d.length - 1 - i] * (i + 2);
-    var v = 11 - (s % 11); return v === 10 ? 0 : v === 11 ? 1 : v;
-  }
   function dvCnpj(b) {
     var w = b.length === 12 ? [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2] : [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2], s = 0;
     for (var i = 0; i < b.length; i++) s += (b.charCodeAt(i) - 48) * w[i];
@@ -151,8 +147,7 @@
     if (typeof v !== 'string' || !cheio(v)) return '';
     var d = v.replace(/[^0-9A-Z]/g, '');
     if (fmt === 'nup') {
-      if (d.length < 17) return saiu ? 'Número incompleto: o processo tem 17 dígitos.' : '';
-      return (String(dvNup(d.slice(0, 15))) + dvNup(d.slice(0, 15) + dvNup(d.slice(0, 15)))) === d.slice(15) ? '' : 'Os dígitos verificadores não conferem. Confira o número do processo.';
+      return d.length < 17 && saiu ? 'Número incompleto: o processo tem 17 dígitos.' : '';
     }
     if (fmt === 'cpf') {
       if (d.length < 11) return saiu ? 'CPF incompleto: são 11 dígitos.' : '';
@@ -200,8 +195,9 @@
   function abrirFormulario() {
     F = (window.FORMULARIOS || {})[E.form] || null;
     $('corpo').hidden = !F;
-    if (!F) { ['carimbo-1', 'carimbo-4'].forEach(function (id) { $(id).hidden = true; }); return; }
-    ['carimbo-1', 'carimbo-4'].forEach(function (id) { var c = $(id); c.textContent = F.carimbo || ''; c.hidden = !F.carimbo; });
+    if (!F) { $('carimbo-topo').hidden = true; $('trilha-form').hidden = true; return; }
+    var cb = $('carimbo-topo'); cb.textContent = F.carimbo || ''; cb.hidden = !F.carimbo;
+    $('trilha-form').hidden = false; $('trilha-nome').textContent = F.nome;
     var leg = $('legislacao'); leg.textContent = 'Legislação de regência: ';
     leg.classList.add('leis');
     F.legislacao.forEach(function (l, i) {
@@ -215,6 +211,7 @@
     erro.hidden = !(F.regime && !gov);
     erro.textContent = erro.hidden ? '' : 'Não foi possível carregar a Governança da Destinação, então o enquadramento não aparece. Verifique a conexão com a internet e recarregue a página.';
     assinaturaEnq = ''; G = null;
+    if (gov) montarFixos();
     montarFormulario();
     mostrarFluxos();
     atualizar();
@@ -251,8 +248,9 @@
     });
     return f;
   }
+  function curtas(textos) { return textos.every(function (t) { return String(t).length <= 34; }); }
   function radios(nome, legenda, pares, atual, aoMudar, classe) {
-    var fs = el('fieldset', { class: classe || '' }, [el('legend', { text: legenda })]);
+    var fs = el('fieldset', { class: (classe || '') + (curtas(pares.map(function (p) { return p[1]; })) ? ' em-linha' : '') }, [el('legend', { text: legenda })]);
     pares.forEach(function (p) {
       var i = el('input', { type: 'radio', name: nome, value: p[0], checked: atual === p[0] });
       i.addEventListener('change', function () { aoMudar(p[0]); });
@@ -260,15 +258,26 @@
     });
     return fs;
   }
-  function montarEnquadramento(lista) {
+  /* Valor e área da União ficam sempre no alto do enquadramento (4ª rodada, 19/11/2026), mesmo
+   * quando a base não precisa deles para o regime: é a primeira coisa que o técnico conhece do
+   * caso. Ficam ligados aos itens do formulário que os repetem. As demais perguntas (situação,
+   * condições) só aparecem quando a base as pede. */
+  function montarFixos() {
     var alvo = $('enq-campos'); alvo.textContent = '';
+    var fixos = el('div', { class: 'enq-fixos' });
+    ['valor', 'area'].forEach(function (nome) {
+      var inp = el('input', { type: 'text', inputmode: 'decimal', id: 'enq-' + nome, 'data-motor': nome, 'data-fmt': nome === 'valor' ? 'moeda' : 'area', autocomplete: 'off', placeholder: '0,00' });
+      inp.value = E.txt[nome] ? formatar(inp.getAttribute('data-fmt'), E.txt[nome], true) : '';
+      fixos.appendChild(el('label', { class: 'campo' }, [el('span', { class: 'rot' }, [rotuloMotor(nome, 'uniao')]), inp]));
+    });
+    alvo.appendChild(fixos);
+    alvo.appendChild(el('div', { id: 'enq-outros', class: 'enq-outros' }));
+  }
+  function montarEnquadramento(lista) {
+    var alvo = $('enq-outros'); alvo.textContent = '';
     lista.forEach(function (c) {
-      if (c.campo === 'valor' || c.campo === 'area') {
-        var inp = el('input', { type: 'text', inputmode: 'decimal', id: 'enq-' + c.campo, 'data-motor': c.campo, 'data-fmt': c.campo === 'valor' ? 'moeda' : 'area', autocomplete: 'off' });
-        inp.value = E.txt[c.campo] ? formatar(inp.getAttribute('data-fmt'), E.txt[c.campo], true) : '';
-        alvo.appendChild(el('label', { class: 'campo' }, [
-          el('span', { class: 'rot' }, [rotuloMotor(c.campo, c.referencia)]), inp]));
-      } else if (c.campo === 'situacao') {
+      if (c.campo === 'valor' || c.campo === 'area') return;
+      if (c.campo === 'situacao') {
         alvo.appendChild(radios('enq-situacao', 'Situação do imóvel', c.valores.map(function (v) { return [v, SITUACAO[v] || v]; }), E.situacao,
           function (v) { E.situacao = v; salvar(); atualizar(); }, 'largo'));
       } else if (c.tipo === 'condicao') {
@@ -363,15 +372,46 @@
     });
     return d;
   }
+  /* Condição de um trecho de lembrete (campo `se`, escrito no gerar_dados.py). O trecho só
+   * aparece quando o que já se sabe do caso o torna pertinente. */
+  function vale(se) {
+    if (!se) return true;
+    if (se.todos) return se.todos.every(vale);
+    if (se.algum) return se.algum.some(vale);
+    if (se.item) { var o = (E.r[se.item] || {}).op; return typeof o === 'number' && se.op.indexOf(o) >= 0; }
+    if (se.cond) return se.em.indexOf(E.cond[se.cond]) >= 0;
+    if (se.motor) { var v = numero(E.txt[se.motor]); return v !== null && v >= se.min; }
+    if (se.manif) return !!(G && G.manif && se.manif.indexOf(G.manif.codigo) >= 0);
+    return true;
+  }
+  /* Os trechos de lembrete que valem agora para o item: os do próprio item e os da opção
+   * marcada, juntos numa caixa só. `ass` identifica o conjunto, para a ciência. */
+  function lembretesVisiveis(it) {
+    var blocos = [], ids = [], r = E.r[it.n] || {};
+    (it.lembrete || []).forEach(function (b, i) { if (vale(b.se)) { blocos.push(b); ids.push('i' + i); } });
+    if (it.tipo === 'uma' && typeof r.op === 'number') (it.opcoes[r.op].lembrete || []).forEach(function (b, i) { if (vale(b.se)) { blocos.push(b); ids.push('o' + r.op + '.' + i); } });
+    return { blocos: blocos, ass: ids.join(',') };
+  }
+  function cienteDe(it, lv) { return !!lv.ass && (E.r[it.n] || {}).ciente === lv.ass; }
+  function caixaLembrete(it) {
+    var lv = lembretesVisiveis(it), alvo = $('lemb-' + it.n);
+    if (!alvo) return;
+    if (alvo.getAttribute('data-ass') === lv.ass) return;
+    alvo.setAttribute('data-ass', lv.ass); alvo.textContent = ''; alvo.hidden = !lv.blocos.length;
+    if (!lv.blocos.length) return;
+    var caixa = el('div', { class: 'lembrete aberto-sempre' }, [el('p', { class: 'titulo-lembrete', text: 'Lembrete da Unidade Central' }), blocosEl(lv.blocos)]);
+    var ck = el('input', { type: 'checkbox', checked: cienteDe(it, lv) });
+    ck.addEventListener('change', function () { resp(it.n).ciente = ck.checked ? lv.ass : ''; salvar(); mostrarConferencia(conferir()); });
+    caixa.appendChild(el('label', { class: 'ciente' }, [ck, el('span', { text: 'Li e estou ciente' })]));
+    alvo.appendChild(caixa);
+  }
+  function atualizarLembretes() { itens().forEach(caixaLembrete); }
   function lembreteRecolhido(blocos) {
     return el('details', { class: 'lembrete' }, [el('summary', { text: 'Lembrete da Unidade Central' }), blocosEl(blocos, 'corpo-lembrete')]);
   }
-  function lembreteAberto(blocos) {
-    return el('div', { class: 'lembrete aberto-sempre' }, [el('p', { class: 'titulo-lembrete', text: 'Lembrete da Unidade Central' }), blocosEl(blocos)]);
-  }
   /* Um campo: rótulo, entrada e a linha de aviso. `p` = caminho na resposta do item. */
   function campoEl(n, p, def, valor, extraAttrs) {
-    var fmt = def.fmt || '', rot = el('span', { class: 'rot' }, [def.r]);
+    var fmt = def.fmt || '', rot = def.r ? el('span', { class: 'rot' }, [def.r]) : null;
     if (fmt === 'radio') {
       var fs = el('fieldset', { class: 'campo campo-radio' }, [el('legend', { class: 'rot', text: def.r })]), par = el('div', { class: 'par' });
       def.valores.forEach(function (v) {
@@ -387,7 +427,7 @@
       fc.appendChild(pc); return fc;
     }
     if (fmt === 'uf') {
-      var su = el('select', { 'data-n': n, 'data-p': p }, [el('option', { value: '', text: 'Escolha o estado' })]);
+      var su = el('select', { 'data-n': n, 'data-p': p }, [el('option', { value: '', text: 'Selecione uma opção' })]);
       (window.ESTADOS || []).forEach(function (u) { su.appendChild(el('option', { value: u[0], text: u[1] + ' (' + u[0] + ')' })); });
       su.value = valor || '';
       return el('label', { class: 'campo' }, [rot, su]);
@@ -406,13 +446,14 @@
     var inp = def.longo ? el('textarea', a) : el('input', Object.assign({ type: 'text' }, a));
     inp.value = valor || '';
     var lab = el('label', { class: 'campo' + (fmt === 'docsei' ? ' doc-sei' : '') }, [rot, inp, el('p', { class: 'msg-campo', hidden: true })]);
+    if (fmt === 'cep') lab.appendChild(el('p', { class: 'info-campo', hidden: true, 'aria-live': 'polite' }));
     return lab;
   }
   function preencherMunicipios(n) {
     var r = resp(n), uf = (r.k || {}).estado, sm = document.querySelector('[data-n="' + n + '"][data-municipio]');
     if (!sm) return;
     sm.textContent = '';
-    sm.appendChild(el('option', { value: '', text: uf ? 'Escolha o município' : 'Escolha antes o estado' }));
+    sm.appendChild(el('option', { value: '', text: uf ? 'Selecione uma opção' : 'Selecione primeiro o estado' }));
     sm.disabled = !uf;
     ((window.MUNICIPIOS || {})[uf] || []).forEach(function (m) { sm.appendChild(el('option', { value: m[0] + '|' + m[1], text: m[1] })); });
     sm.value = (r.k || {}).municipio || '';
@@ -422,12 +463,12 @@
   }
   function montarItem(it) {
     var r = resp(it.n), d = el('div', { class: 'item', id: 'item-' + it.n });
-    d.appendChild(el('h4', {}, [el('span', { class: 'num', text: it.conclusao ? '' : it.n }), it.titulo]));
+    d.appendChild(el('h4', { id: 'tit-' + it.n }, [el('span', { class: 'num', text: it.conclusao ? '' : it.n }), it.titulo]));
     if (it.ajuda) d.appendChild(el('p', { class: 'ajuda' }, [comLinks(it.ajuda)]));
     if (it.governanca) d.appendChild(el('p', { class: 'vinculo', id: 'dica-governanca' }));
 
-    if (it.tipo === 'texto') d.appendChild(campoEl(it.n, 't', { r: 'Resposta', fmt: it.fmt }, r.t));
-    else if (it.tipo === 'longo') d.appendChild(campoEl(it.n, 't', { r: 'Resposta', longo: true }, r.t));
+    if (it.tipo === 'texto') d.appendChild(campoEl(it.n, 't', { r: '', fmt: it.fmt }, r.t, { 'aria-labelledby': 'tit-' + it.n }));
+    else if (it.tipo === 'longo') d.appendChild(campoEl(it.n, 't', { r: '', longo: true }, r.t, { 'aria-labelledby': 'tit-' + it.n }));
     else if (it.tipo === 'campos') {
       var g = el('div', { class: 'linha-campos' });
       it.campos.forEach(function (c) {
@@ -437,18 +478,15 @@
       });
       d.appendChild(g);
     } else if (it.tipo === 'uma') {
-      var fs = el('fieldset', {}, [el('legend', { class: 'rot', text: 'Marque uma opção' })]);
+      var fs = el('fieldset', { class: curtas(it.opcoes.map(function (o) { return (o.n ? o.n + ' — ' : '') + o.t; })) ? 'em-linha' : '' }, [el('legend', { class: 'rot', text: 'Marque uma opção' })]);
       it.opcoes.forEach(function (o, i) {
         var inp = el('input', { type: 'radio', name: 'r-' + it.n, 'data-n': it.n, 'data-p': 'op', value: String(i), checked: r.op === i });
         fs.appendChild(el('label', { class: 'opcao' }, [inp, el('span', {}, [(o.n ? o.n + ' — ' : ''), comLinks(o.t)])]));
-        if (o.campos || (o.lembrete && F.modelo_obs !== 'janela')) {
+        if (o.campos) {
           var cv = ((r.c || {})[i]) || {}, compl = el('div', { class: 'compl', 'data-compl': it.n + ':' + i, hidden: r.op !== i });
-          if (o.campos) {
-            var lc = el('div', { class: 'linha-campos' });
-            o.campos.forEach(function (c) { lc.appendChild(campoEl(it.n, 'c:' + i + ':' + c.k, c, cv[c.k])); });
-            compl.appendChild(lc);
-          }
-          if (o.lembrete && F.modelo_obs !== 'janela') compl.appendChild(lembreteAberto(o.lembrete));
+          var lc = el('div', { class: 'linha-campos' });
+          o.campos.forEach(function (c) { lc.appendChild(campoEl(it.n, 'c:' + i + ':' + c.k, c, cv[c.k])); });
+          compl.appendChild(lc);
           fs.appendChild(compl);
         }
       });
@@ -461,7 +499,7 @@
         d.appendChild(enc);
       }
     } else if (it.tipo === 'varias') {
-      var fv = el('fieldset', {}, [el('legend', { class: 'rot', text: 'Marque as opções aplicáveis' })]), ops = r.ops || [];
+      var fv = el('fieldset', { class: curtas(it.opcoes.map(function (o) { return o.t; })) ? 'em-linha' : '' }, [el('legend', { class: 'rot', text: 'Marque as opções que se aplicam' })]), ops = r.ops || [];
       it.opcoes.forEach(function (o, i) {
         fv.appendChild(el('label', { class: 'opcao' }, [el('input', { type: 'checkbox', name: 'v-' + it.n, 'data-n': it.n, 'data-p': 'ops', value: String(i), checked: ops.indexOf(i) >= 0 }), el('span', {}, [comLinks(o.t)])]));
       });
@@ -479,54 +517,26 @@
       });
     }
 
+    d.appendChild(el('div', { class: 'caixa-lembrete', id: 'lemb-' + it.n, hidden: true }));
     var extra = el('div', { class: 'extra' });
     if (it.sei) extra.appendChild(docSeiEl(it.n, 'sei', r.sei));
-    if (F.modelo_obs === 'janela') {
-      var temLembrete = !!(it.lembrete || (it.opcoes || []).some(function (o) { return o.lembrete; }));
-      var bt = el('button', { type: 'button', class: 'bt-obs', 'data-obs': it.n }, ['Observações e ressalvas', temLembrete ? el('span', { class: 'tag-lembrete', text: 'lembrete da Unidade Central' }) : null]);
-      bt.addEventListener('click', function () { abrirJanela(it); });
-      extra.appendChild(el('div', { class: 'linha-obs' }, [bt, el('p', { class: 'previa-obs', id: 'previa-obs-' + it.n, text: previaObs(r.obs) })]));
-      d.appendChild(extra);
-      return d;
-    }
-    extra.appendChild(campoEl(it.n, 'obs', { r: 'Observações e ressalvas', longo: true }, r.obs));
+    extra.appendChild(observacaoEl(it.n, r.obs));
     d.appendChild(extra);
-    if (it.lembrete) d.appendChild(lembreteRecolhido(it.lembrete));
     return d;
   }
-  function previaObs(t) { return cheio(t) ? (String(t).length > 140 ? String(t).slice(0, 140) + '…' : String(t)) : 'Nenhuma observação ou ressalva.'; }
-  /* Modelo em teste no Aforamento Gratuito (18/11/2026): o lembrete da Unidade Central e o
-   * campo de observações e ressalvas ficam numa janela, aberta pelo botão do item. No formulário
-   * original os lembretes ficam justamente na coluna "Observações e Ressalvas". */
-  var itemJanela = null;
-  function abrirJanela(it) {
-    itemJanela = it;
-    var r = resp(it.n), dlg = $('janela-obs');
-    $('janela-titulo').textContent = it.n + ' — ' + it.titulo;
-    var alvo = $('janela-lembrete'); alvo.textContent = '';
-    var blocos = [];
-    if (it.lembrete) blocos.push(it.lembrete);
-    if (it.tipo === 'uma' && typeof r.op === 'number' && it.opcoes[r.op].lembrete) blocos.push(it.opcoes[r.op].lembrete);
-    if (blocos.length) {
-      var caixa = el('div', { class: 'lembrete aberto-sempre' }, [el('p', { class: 'titulo-lembrete', text: 'Lembrete da Unidade Central' })]);
-      blocos.forEach(function (b) { caixa.appendChild(blocosEl(b)); });
-      alvo.appendChild(caixa);
-    } else if (it.tipo === 'uma' && (it.opcoes || []).some(function (o) { return o.lembrete; })) {
-      alvo.appendChild(el('p', { class: 'nota', text: 'Marque uma opção do item para ver o lembrete correspondente.' }));
-    }
-    $('janela-texto').value = r.obs || '';
-    if (dlg.showModal) dlg.showModal(); else dlg.setAttribute('open', '');
-    $('janela-texto').focus();
-  }
-  function fecharJanela() {
-    var dlg = $('janela-obs');
-    if (itemJanela) {
-      resp(itemJanela.n).obs = $('janela-texto').value; salvar();
-      var pv = $('previa-obs-' + itemJanela.n); if (pv) pv.textContent = previaObs($('janela-texto').value);
-      var b = document.querySelector('[data-obs="' + itemJanela.n + '"]'); if (b) b.focus();
-      itemJanela = null; atualizar();
-    }
-    if (dlg.open) { if (dlg.close) dlg.close(); else dlg.removeAttribute('open'); }
+  /* Observações e ressalvas ficam recolhidas atrás de "Incluir observação" (4ª rodada): a
+   * maioria dos itens não tem, e o campo aberto em todos pesava a página. Abre sozinho quando
+   * já há texto. */
+  function observacaoEl(n, valor) {
+    var caixa = el('div', { class: 'obs' }), aberto = cheio(valor);
+    var bt = el('button', { type: 'button', class: 'bt-obs', hidden: aberto }, ['+ Incluir observação']);
+    var campo = campoEl(n, 'obs', { r: 'Observações e ressalvas', longo: true }, valor,
+      { placeholder: 'Insira aqui as observações e ressalvas sobre este item.', maxlength: 3000 });
+    campo.appendChild(el('p', { class: 'limite' }, ['Limite máximo de ', el('b', { text: '3.000' }), ' caracteres.']));
+    campo.hidden = !aberto;
+    bt.addEventListener('click', function () { bt.hidden = true; campo.hidden = false; campo.querySelector('textarea').focus(); });
+    caixa.appendChild(bt); caixa.appendChild(campo);
+    return caixa;
   }
   function montarFormulario() {
     var alvo = $('formulario'); alvo.textContent = '';
@@ -577,7 +587,55 @@
     mostrarValidacao(t, true);
     var motor = t.getAttribute('data-motor');
     if (motor) { defMotor(motor, t.value, t, true); return; }
+    if (t.getAttribute('data-fmt') === 'cep') buscarCep(t);
     if (t.value !== antes) t.dispatchEvent(new Event('input', { bubbles: true }));
+  }
+
+  // ------------------------------------------------------------------ endereço pelo CEP
+  /* ViaCEP (gratuito, sem senha, base dos Correios); se falhar, BrasilAPI; se as duas falharem,
+   * preenchimento manual. Só o CEP sai da página. Resultado guardado no navegador. */
+  var CACHE_CEP = 'formularios-instrucao-cep-v1';
+  function semAcento(t) { return String(t || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim(); }
+  function infoCep(inp, texto, erro) {
+    var p = inp.parentNode.querySelector('.info-campo'); if (!p) return;
+    p.textContent = texto || ''; p.hidden = !texto; p.classList.toggle('falhou', !!erro);
+  }
+  function buscarCep(inp) {
+    var n = inp.getAttribute('data-n'), d = inp.value.replace(/\D/g, '');
+    if (d.length !== 8) { infoCep(inp, ''); return; }
+    var cache = {}; try { cache = JSON.parse(localStorage.getItem(CACHE_CEP) || '{}'); } catch (e) { cache = {}; }
+    if (cache[d]) { aplicarCep(n, cache[d], inp); return; }
+    infoCep(inp, 'Buscando o endereço pelo CEP…');
+    function guardar(e) { cache[d] = e; try { localStorage.setItem(CACHE_CEP, JSON.stringify(cache)); } catch (x) { /* sem armazenamento */ } aplicarCep(n, e, inp); }
+    fetch('https://viacep.com.br/ws/' + d + '/json/').then(function (r) { if (!r.ok) throw new Error('viacep'); return r.json(); })
+      .then(function (j) {
+        if (j.erro) { infoCep(inp, 'CEP não encontrado na base dos Correios. Confira o número ou preencha o endereço à mão.', true); return; }
+        guardar({ uf: j.uf, ibge: j.ibge, cidade: j.localidade, logradouro: j.logradouro, bairro: j.bairro, fonte: 'ViaCEP' });
+      })
+      .catch(function () {
+        fetch('https://brasilapi.com.br/api/cep/v1/' + d).then(function (r) { if (!r.ok) throw new Error('brasilapi'); return r.json(); })
+          .then(function (j) { guardar({ uf: j.state, ibge: null, cidade: j.city, logradouro: j.street, bairro: j.neighborhood, fonte: 'BrasilAPI' }); })
+          .catch(function () { infoCep(inp, 'Não foi possível buscar o endereço agora. Preencha à mão.', true); });
+      });
+  }
+  function aplicarCep(n, e, inp) {
+    var r = resp(n); r.k = r.k || {};
+    if (e.uf) {
+      r.k.estado = e.uf;
+      var su = document.querySelector('[data-n="' + n + '"][data-p="k:estado"]'); if (su) su.value = e.uf;
+      preencherMunicipios(n);
+      var lista = (window.MUNICIPIOS || {})[e.uf] || [], achou = null;
+      if (e.ibge) achou = lista.filter(function (m) { return String(m[0]) === String(e.ibge); })[0];
+      if (!achou && e.cidade) achou = lista.filter(function (m) { return semAcento(m[1]) === semAcento(e.cidade); })[0];
+      if (achou) { r.k.municipio = achou[0] + '|' + achou[1]; var sm = document.querySelector('[data-n="' + n + '"][data-municipio]'); if (sm) sm.value = r.k.municipio; }
+    }
+    var lg = [e.logradouro, e.bairro].filter(function (x) { return x && String(x).trim(); }).join(' – ');
+    if (!cheio(r.k.logradouro) || r.k.logradouro === r.k._lg_auto) {      // só troca o que veio de outro CEP
+      r.k.logradouro = lg; r.k._lg_auto = lg;
+      var il = document.querySelector('[data-n="' + n + '"][data-p="k:logradouro"]'); if (il) il.value = lg;
+    }
+    salvar(); atualizar();
+    infoCep(inp, 'Endereço preenchido pelo CEP (' + e.fonte + '). Confira e complete' + (lg ? '.' : ': este CEP não traz logradouro.'));
   }
 
   // ------------------------------------------------------------------ passo 5: conferência
@@ -605,10 +663,11 @@
     return out;
   }
   function conferir() {
-    var alertas = [], pend = [], concl = null, cdeNaoFavoravel = false;
+    var alertas = [], pend = [], ciencia = [], concl = null, cdeNaoFavoravel = false;
     itens().forEach(function (it) {
-      var r = E.r[it.n] || {};
+      var r = E.r[it.n] || {}, lv = lembretesVisiveis(it);
       if (!respondido(it)) pend.push(it.n);
+      if (lv.blocos.length && !cienteDe(it, lv)) ciencia.push(it.n);
       if (it.tipo === 'uma' && typeof r.op === 'number') {
         var o = it.opcoes[r.op];
         if (o.alerta) alertas.push(o.alerta);
@@ -617,10 +676,10 @@
           var codigos = Array.isArray(it.governanca) ? it.governanca : ['cde'];
           if (r.op === 0 && ((r.c || {})[0] || {}).resultado === 'nao_favoravel') cdeNaoFavoravel = true;
           if (G && G.manif && (r.op === 0) !== (codigos.indexOf(G.manif.codigo) >= 0))
-            alertas.push('Item ' + it.n + ': a resposta marcada não confere com o enquadramento do passo 2 (' + G.manif.texto + ').');
+            alertas.push('Item ' + it.n + ': a resposta marcada não confere com o enquadramento (' + G.manif.texto + ').');
           var onde = ((r.c || {})[r.op] || {}).onde;
           if (G && G.manif && onde && codigos.indexOf(G.manif.codigo) >= 0 && onde !== G.manif.codigo)
-            alertas.push('Item ' + it.n + ': o cadastro marcado não confere com o enquadramento do passo 2 (' + G.manif.texto + ').');
+            alertas.push('Item ' + it.n + ': o cadastro marcado não confere com o enquadramento (' + G.manif.texto + ').');
         }
       }
       var escolhas = (it.campos || []).map(function (c) { return [c, (r.k || {})[c.k]]; });
@@ -641,10 +700,10 @@
       var enc = encaminhamento(rc.enc);
       if (enc && enc.esperado && G) {
         var dim = Object.keys(enc.esperado)[0], g = G[dim];
-        if (g && g.codigo !== enc.esperado[dim]) alertas.push('Encaminhamento: o marcado não confere com o enquadramento do passo 2 (' + g.texto + ').');
+        if (g && g.codigo !== enc.esperado[dim]) alertas.push('Encaminhamento: o marcado não confere com o enquadramento (' + g.texto + ').');
       }
     }
-    return { alertas: alertas, pend: pend, concl: concl };
+    return { alertas: alertas, pend: pend, ciencia: ciencia, concl: concl };
   }
   function encaminhamento(k) { return (F.encaminhamento || []).filter(function (e) { return e.k === k; })[0] || null; }
   function irPara(n) {
@@ -661,26 +720,34 @@
       var ul = el('ul'); c.alertas.forEach(function (a) { ul.appendChild(el('li', { text: a })); });
       alvo.appendChild(el('div', { class: 'alarme', role: 'alert' }, [el('h3', { text: 'Pontos de atenção (' + c.alertas.length + ')' }), ul]));
     }
-    if (c.pend.length) {
+    function saltosDe(lista) {
       var saltos = el('div', { class: 'saltos' });
-      c.pend.forEach(function (n) {
+      lista.forEach(function (n) {
         var it = itens().filter(function (x) { return x.n === n; })[0];
         var b = el('button', { type: 'button', text: it && it.conclusao ? 'Conclusão' : n, title: 'Ir para o item' });
         b.addEventListener('click', function () { irPara(n); });
         saltos.appendChild(b);
       });
+      return saltos;
+    }
+    if (c.pend.length) {
       alvo.appendChild(el('div', { class: 'pendente' }, [el('h3', { text: 'Itens ainda sem resposta (' + c.pend.length + ')' }),
-        el('p', { class: 'nota', text: 'Clique no número para ir direto ao item.' }), saltos]));
-    } else {
-      alvo.appendChild(el('div', { class: 'calmo' }, [el('strong', { text: 'Todos os itens têm resposta.' })]));
+        el('p', { class: 'nota', text: 'Clique no número para ir direto ao item.' }), saltosDe(c.pend)]));
+    }
+    if (c.ciencia.length) {
+      alvo.appendChild(el('div', { class: 'pendente' }, [el('h3', { text: 'Lembretes sem ciência (' + c.ciencia.length + ')' }),
+        el('p', { class: 'nota', text: 'Leia o lembrete da Unidade Central e marque "Li e estou ciente". A ciência não vai para o documento do SEI.' }), saltosDe(c.ciencia)]));
+    }
+    if (!c.pend.length && !c.ciencia.length) {
+      alvo.appendChild(el('div', { class: 'calmo' }, [el('strong', { text: 'Todos os itens têm resposta e todos os lembretes têm ciência.' })]));
     }
     var enc = $('encaminhamento');
     if (enc) {
       enc.hidden = !(c.concl && c.concl.fecho === 'favoravel');
-      $('dica-encaminhamento').textContent = G && (G.comp || G.manif) ? 'Pelo enquadramento do passo 2: ' + [G.manif ? G.manif.texto : '', G.comp ? 'quem decide: ' + G.comp.texto : ''].filter(Boolean).join('; ') + '.' : '';
+      $('dica-encaminhamento').textContent = G && (G.comp || G.manif) ? 'Pelo enquadramento: ' + [G.manif ? G.manif.texto : '', G.comp ? 'quem decide: ' + G.comp.texto : ''].filter(Boolean).join('; ') + '.' : '';
     }
     var dg = $('dica-governanca');
-    if (dg) dg.textContent = !temGovernanca() ? '' : G && G.manif ? 'Pelo enquadramento do passo 2: ' + G.manif.texto + '.' : 'Responda o enquadramento do passo 2 para ver a indicação da Governança.';
+    if (dg) dg.textContent = !temGovernanca() ? '' : G && G.manif ? 'Pelo enquadramento: ' + G.manif.texto + '.' : 'Responda o enquadramento, no alto da página, para ver a indicação da Governança.';
   }
 
   // ------------------------------------------------------------------ documento
@@ -799,6 +866,7 @@
   function atualizar() {
     if (!F) return;
     if (temGovernanca()) calcularEnquadramento();
+    atualizarLembretes();
     mostrarConferencia(conferir());
     if ($('previa-det').open) $('previa').innerHTML = documentoHTML();
   }
@@ -810,9 +878,6 @@
       $(id).addEventListener('change', aoEditar);
       $(id).addEventListener('focusout', aoSair);
     });
-    $('janela-concluir').addEventListener('click', fecharJanela);
-    $('janela-obs').addEventListener('close', function () { if (itemJanela) fecharJanela(); });
-    $('janela-obs').addEventListener('cancel', function (ev) { ev.preventDefault(); fecharJanela(); });
     $('previa-det').addEventListener('toggle', function () { if ($('previa-det').open) $('previa').innerHTML = documentoHTML(); });
     $('bt-copiar').addEventListener('click', function () {
       copiar(documentoHTML()).then(function (ok) {
@@ -826,14 +891,14 @@
     });
   }
   /* Caixinha do Escritório: o relato cai em home.pedidos e aparece na área da equipe da Home
-   * EPP. Dois botões, uma ficha só (regra de 13/11/2026): "Fale com a equipe" no rodapé e a
-   * pergunta junto do formulário. O caso vai junto: qual formulário e qual versão. */
+   * EPP. Dois botões, uma ficha só (regra de 13/11/2026): o balão "Reportar problema", fixo no
+   * canto da tela, e "Fale com a equipe" no rodapé. O caso vai junto: qual formulário e qual versão. */
   function ligarCaixinha() {
     if (!window.SPUCaixinha) return;
     SPUCaixinha.iniciar({
       ferramenta: 'formularios',
       nome: 'Formulários de Instrução de Destinação',
-      botao: '#relatar',
+      rotuloBotao: 'Reportar problema',
       contexto: function () {
         return F ? [['Formulário', F.nome], ['Versão do formulário', F.origem.versao]] : [['Formulário', 'nenhum escolhido']];
       }
