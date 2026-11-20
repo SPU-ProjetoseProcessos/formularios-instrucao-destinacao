@@ -585,12 +585,30 @@
   }
   function montarFormulario() {
     var alvo = $('formulario'); alvo.textContent = '';
+    /* Seções recolhidas (experimento de 20/11/2026): cada seção abre e fecha pelo título, que
+     * diz quantos itens já têm resposta. Começam fechadas; o que a pessoa abriu fica guardado. */
+    var abertas = E.abertas || [];
+    function todas(abrir) { alvo.querySelectorAll('details.secao').forEach(function (d) { d.open = abrir; }); }
+    var btA = el('button', { type: 'button', class: 'bt-texto' }, ['Abrir todas as seções']);
+    var btF = el('button', { type: 'button', class: 'bt-texto' }, ['Fechar todas']);
+    btA.addEventListener('click', function () { todas(true); });
+    btF.addEventListener('click', function () { todas(false); });
+    alvo.appendChild(el('div', { class: 'barra-secoes' }, [btA, btF]));
     F.secoes.forEach(function (s) {
-      var sec = el('div', { class: 'secao' }, [el('h3', { text: s.n + '. ' + s.titulo })]);
-      if (s.intro) sec.appendChild(blocosEl(s.intro, 'intro'));
+      var sec = el('details', { class: 'secao', id: 'secao-' + s.n, open: abertas.indexOf(s.n) >= 0 });
+      sec.appendChild(el('summary', {}, [el('span', { class: 'seta', 'aria-hidden': 'true' }), el('h3', { text: s.n + '. ' + s.titulo }),
+        el('span', { class: 'sit-secao', id: 'sit-' + s.n })]));
+      var corpo = el('div', { class: 'corpo-secao' });
+      if (s.intro) corpo.appendChild(blocosEl(s.intro, 'intro'));
       s.itens.forEach(function (it) {
-        if (it.grupo) sec.appendChild(el('p', { class: 'grupo', text: it.grupo }));
-        sec.appendChild(montarItem(it));
+        if (it.grupo) corpo.appendChild(el('p', { class: 'grupo', text: it.grupo }));
+        corpo.appendChild(montarItem(it));
+      });
+      sec.appendChild(corpo);
+      sec.addEventListener('toggle', function () {
+        var l = (E.abertas || []).filter(function (x) { return x !== s.n; });
+        if (sec.open) l.push(s.n);
+        E.abertas = l; salvar();
       });
       alvo.appendChild(sec);
     });
@@ -771,11 +789,29 @@
   function encaminhamento(k) { return (F.encaminhamento || []).filter(function (e) { return e.k === k; })[0] || null; }
   function irPara(n) {
     var alvo = $('item-' + n); if (!alvo) return;
+    var sec = alvo.closest('details.secao'); if (sec && !sec.open) sec.open = true;
     alvo.scrollIntoView({ block: 'start' });
     var campo = alvo.querySelector('input:not([type=radio]), textarea, select, input[type=radio]');
     if (campo) { try { campo.focus({ preventScroll: true }); } catch (e) { campo.focus(); } }
     alvo.classList.add('realce');
     setTimeout(function () { alvo.classList.remove('realce'); }, 3500);
+  }
+  /* No título de cada seção: quantos itens já têm resposta e quantos lembretes faltam ler. Texto
+   * fixo não conta: não há o que responder. */
+  function situacaoSecoes(c) {
+    F.secoes.forEach(function (s) {
+      var alvo = $('sit-' + s.n); if (!alvo) return;
+      var lista = s.itens.filter(function (it) { return visivel(it) && it.tipo !== 'fixo'; });
+      var falta = lista.filter(function (it) { return c.pend.indexOf(it.n) >= 0; }).length;
+      var cien = s.itens.filter(function (it) { return c.ciencia.indexOf(it.n) >= 0; }).length;
+      var partes = [];
+      if (!lista.length) partes.push('Só texto fixo, nada a preencher');
+      else if (!falta) partes.push('✓ Todos os itens respondidos');
+      else partes.push((lista.length - falta) + ' de ' + lista.length + (lista.length === 1 ? ' respondido' : ' respondidos'));
+      if (cien) partes.push(cien + (cien === 1 ? ' lembrete sem ciência' : ' lembretes sem ciência'));
+      alvo.textContent = partes.join(' · ');
+      alvo.classList.toggle('completa', !!lista.length && !falta && !cien);
+    });
   }
   function mostrarConferencia(c) {
     var alvo = $('atencao'); alvo.textContent = '';
@@ -933,7 +969,9 @@
     if (temGovernanca()) calcularEnquadramento();
     itens().forEach(function (it) { if (it.se) { var d = $('item-' + it.n); if (d) d.hidden = !visivel(it); } });
     atualizarLembretes();
-    mostrarConferencia(conferir());
+    var c = conferir();
+    mostrarConferencia(c);
+    situacaoSecoes(c);
     if ($('previa-det').open) $('previa').innerHTML = documentoHTML();
   }
   function iniciar() {
